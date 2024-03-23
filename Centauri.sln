@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Host", "Host\Host.csproj", "{A9AA48C4-D9F9-413A-8F98-5FE41105F425}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Travelport", "Travelport", "{C1CFEA37-2734-4F36-98C1-C0F499F01412}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelAPIs", "Travelport\TravelAPIs\TravelAPIs.csproj", "{6F684AC4-F52E-4EA4-AB71-941BAD2C2802}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A9AA48C4-D9F9-413A-8F98-5FE41105F425}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9AA48C4-D9F9-413A-8F98-5FE41105F425}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9AA48C4-D9F9-413A-8F98-5FE41105F425}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9AA48C4-D9F9-413A-8F98-5FE41105F425}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F684AC4-F52E-4EA4-AB71-941BAD2C2802}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F684AC4-F52E-4EA4-AB71-941BAD2C2802}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F684AC4-F52E-4EA4-AB71-941BAD2C2802}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F684AC4-F52E-4EA4-AB71-941BAD2C2802}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6F684AC4-F52E-4EA4-AB71-941BAD2C2802} = {C1CFEA37-2734-4F36-98C1-C0F499F01412}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {84CF16A6-EEBE-406A-A173-736280566078}
+	EndGlobalSection
+EndGlobal
