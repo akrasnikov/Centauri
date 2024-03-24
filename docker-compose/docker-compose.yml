@@ -1,0 +1,120 @@
+version: "3.3"
+
+services:
+  openid:
+    container_name: openid
+    image: openid/projects.host:1.0
+    ports:
+      - "8010:8010"
+    build:
+      context: .
+      dockerfile: ./src/Host/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Stage
+      - TZ=Asia/Karachi
+    restart: on-failure
+    depends_on:
+      - database
+      - redis
+      - rabbit
+      - elastic
+
+  database:
+    container_name: database
+    image: 'postgres:latest'
+    env_file:
+      - .env
+    volumes:
+      - unity_volume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+
+  redis:
+    container_name: redis
+    image: bitnami/redis:5.0.9
+    hostname: redis
+    env_file:
+      - .env
+    ports:
+      - "6379:6379"
+    restart: on-failure
+
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/all-in-one:latest
+    env_file:
+      - .env
+    ports:
+      - "5775:5775"
+      - "6831:6831"
+      - "6832:6832"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "14250:14250"
+      - "4317:4317"
+    restart: on-failure
+
+  rabbit:
+    container_name: rabbit
+    image: rabbitmq:3-management
+    env_file:
+      - .env
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: on-failure
+
+  mongo:
+    container_name: mongo
+    image: mongo:6-jammy
+    env_file:
+      - .env
+    ports:
+      - "27017:27017"
+    volumes:
+      - unity_volume:/var/lib/mongodb/data
+    restart: on-failure
+
+  elastic:
+    container_name: elastic
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.3
+    env_file:
+      - .env
+    ports:
+      - "9200:9200"
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - ELASTIC_USERNAME=$ELASTIC_USERNAME
+      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
+      - xpack.security.enabled=$ELASTIC_SECURITY
+    restart: on-failure
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.17.3
+    depends_on:
+      - "elastic"
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elastic:9200
+      - XPACK_MONITORING_ENABLED=true
+      - XPACK_MONITORING_COLLECTION_ENABLED=true
+      - XPACK_SECURITY_ENABLED=$ELASTIC_SECURITY
+      - ELASTICSEARCH_USERNAME=$ELASTIC_USERNAME
+      - ELASTICSEARCH_PASSWORD=$ELASTIC_PASSWORD
+    restart: on-failure
+
+volumes:
+  openid_volume:
+    driver_opts:
+      type: none
+      device: /var/openid
+      o: bind
+
+  unity_volume:
+    driver: local
