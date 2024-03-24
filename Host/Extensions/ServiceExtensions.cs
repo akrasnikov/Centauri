@@ -1,5 +1,6 @@
 ﻿using Hangfire;
 using Hangfire.InMemory;
+using Host.Integrations;
 using Host.Middleware;
 using System.Text.Json;
 
@@ -34,7 +35,7 @@ namespace Host.Extensions
         }
 
         public static void AddBackgroundService(this IServiceCollection services)
-        {            
+        {
             services.AddHangfire(config => config
                 .UseIgnoredAssemblyVersionTypeResolver()
                 .UseInMemoryStorage(new InMemoryStorageOptions
@@ -61,6 +62,13 @@ namespace Host.Extensions
                            .AllowAnyMethod();
                 });
             });
+        }
+
+        public static IServiceCollection AddIntegrationClient(this IServiceCollection services)
+        {
+
+            services.AddHttpClient<IFlightClient, FlightClient>();
+            return services;
         }
 
     }

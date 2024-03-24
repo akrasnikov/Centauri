@@ -15,6 +15,7 @@ namespace Host
             builder.Services.AddControllers();
             builder.Services.AddCustomCors();
             builder.Services.AddBackgroundService();
+            builder.Services.AddIntegrationClient();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
