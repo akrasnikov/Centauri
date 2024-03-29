@@ -1,5 +1,6 @@
 ﻿using Host.Entities;
 using Host.Interfaces;
+using Host.Metrics;
 using Host.Requests;
 using Host.Wrappers;
 using Microsoft.AspNetCore.Mvc;
@@ -8,23 +9,23 @@ namespace Host.Controllers
 {
     public class OrdersController : Controller
     {
-        private readonly IOrderAggregator _aggregator;
+        private readonly IOrderService _aggregator;
+        private readonly OrderInstrumentation _instrumentation;
 
-        public OrdersController(IOrderAggregator aggregator)
+        public OrdersController(IOrderService aggregator, OrderInstrumentation instrumentation)
         {
             _aggregator = aggregator ?? throw new ArgumentNullException(nameof(aggregator));
+            _instrumentation = instrumentation ?? throw new ArgumentNullException(nameof(instrumentation));
         }
 
         [ProducesResponseType(typeof(Response<Order>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response<Order>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpPost("travels/order/{id}")]
+        [HttpPost("order/{id}")]
         public async Task<IActionResult> CreateAsync([FromBody] SearchRequest request)
         {
-
-            var response = await _aggregator.GetAsync(request, HttpContext.RequestAborted);
-            return Ok(response);
-            
+            var response = await _aggregator.CreateAsync(request, HttpContext.RequestAborted);
+            return Ok(response);            
         }
 
 
@@ -32,12 +33,12 @@ namespace Host.Controllers
         [ProducesResponseType(typeof(IReadOnlyCollection<Order>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response<Order>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet("travels/orders/{id:guid}")]
-        public async Task<IActionResult> GetAsync([FromQuery] Guid id)
+        [HttpGet("orders/")]
+        public async Task<IActionResult> GetAsync([FromQuery] string id)
         {
-
-            var response = await _aggregator.GetFlightsAsync(request, HttpContext.RequestAborted);
-            return Ok(response);
+            _instrumentation.AddOrder();
+            //var response = await _aggregator.GetFlightsAsync(request, HttpContext.RequestAborted);
+            return Ok("hello" );
         }
     }
 }

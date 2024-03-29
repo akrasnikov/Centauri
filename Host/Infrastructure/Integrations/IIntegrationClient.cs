@@ -1,7 +1,6 @@
-﻿
-namespace Host.Integrations
+﻿namespace Host.Infrastructure.Integrations
 {
-    public interface IFlightClient
+    public interface IIntegrationClient
     {
         Task<string> SendAsync(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default);
     }

@@ -3,7 +3,7 @@ using Host.Requests;
 
 namespace Host.Interfaces
 {
-    public interface IOrderAggregator
+    public interface IOrderService
     {
         Task<IReadOnlyCollection<Order>> GetAsync(Guid id, CancellationToken cancellationToken = default);
         Task<Order> CreateAsync(SearchRequest request, CancellationToken cancellationToken = default);

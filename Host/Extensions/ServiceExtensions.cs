@@ -1,14 +1,23 @@
 ﻿using Hangfire;
 using Hangfire.InMemory;
-using Host.Integrations;
+using Host.Infrastructure.Integrations;
+using Host.Interfaces;
+using Host.Metrics;
 using Host.Middleware;
+using Host.Services;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using System.Text.Json;
 
 namespace Host.Extensions
 {
     public static class ServiceExtensions
     {
-
+        public static void AddServices(this IServiceCollection services)
+        {
+            services.AddTransient<IOrderService, OrderService>();
+            services.AddSingleton<OrderInstrumentation>();
+        }
         public static void UseSwaggerExtension(this IApplicationBuilder app)
         {
             app.UseSwagger();
@@ -66,8 +75,21 @@ namespace Host.Extensions
 
         public static IServiceCollection AddIntegrationClient(this IServiceCollection services)
         {
-
-            services.AddHttpClient<IFlightClient, FlightClient>();
+            services.AddHttpClient<IntegrationClient>();
+            return services;
+        }
+        public static IServiceCollection AddRateLImitInstrumentation(this IServiceCollection services, IConfiguration configuration)
+        {
+            var meterName = configuration["OrderInstrumentationMeterName"]?.ToLowerInvariant() ?? throw new NullReferenceException("OrderInstrumentation  meter missing a name");
+            services
+                .AddOpenTelemetry()
+                .WithMetrics(metrics => metrics
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("orders.webapi"))
+                    .AddMeter("orders.meter")
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddRuntimeInstrumentation()                 
+                    .AddPrometheusExporter());
             return services;
         }
 
