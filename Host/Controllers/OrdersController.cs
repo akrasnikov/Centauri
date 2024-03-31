@@ -10,9 +10,9 @@ namespace Host.Controllers
     public class OrdersController : Controller
     {
         private readonly IOrderService _aggregator;
-        private readonly OrderInstrumentation _instrumentation;
+        private readonly MetricsInstrumentation _instrumentation;
 
-        public OrdersController(IOrderService aggregator, OrderInstrumentation instrumentation)
+        public OrdersController(IOrderService aggregator, MetricsInstrumentation instrumentation)
         {
             _aggregator = aggregator ?? throw new ArgumentNullException(nameof(aggregator));
             _instrumentation = instrumentation ?? throw new ArgumentNullException(nameof(instrumentation));
