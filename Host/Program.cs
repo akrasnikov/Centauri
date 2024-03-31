@@ -11,18 +11,14 @@ namespace Host
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+          
             builder.Services.AddControllers();
             builder.Services.AddCustomCors();
             builder.Services.AddServices();
             builder.Services.AddBackgroundService();
-            builder.Services.AddIntegrationClient();
-            builder.Services.AddOpenTelemetry()
-                .ConfigureResource(resource => resource.AddService(serviceName: "host"))
-                .WithMetrics(metrics =>
-                metrics.AddAspNetCoreInstrumentation()
-                .AddRuntimeInstrumentation()
-                .AddPrometheusExporter());
+            builder.Services.AddIntegration(builder.Configuration);
+            builder.Services.AddInstrumentation(builder.Configuration);
+            
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
