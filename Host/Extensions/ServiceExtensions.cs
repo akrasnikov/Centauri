@@ -3,6 +3,7 @@ using Hangfire.InMemory;
 using Host.Caching;
 using Host.Common.Interfaces;
 using Host.Infrastructure.Integrations;
+using Host.Infrastructure.Notifications;
 using Host.Middleware;
 using Host.Options;
 using OpenTelemetry.Metrics;
@@ -146,14 +147,17 @@ namespace Host.Extensions
             return services;
         }
         public static IServiceCollection AddIntegration(this IServiceCollection services, IConfiguration configuration)
-        {
+        {  
             services.Configure<IntegrationOptions>(configuration);
-            services.AddHttpClient<IntegrationClient>();
+            services.AddHttpClient<IntegrationClient>()
+                  .AddStandardResilienceHandler(options =>
+                    {
+                        // Configure standard resilience options here
+                    });;
             return services;
         }
         public static IServiceCollection AddInstrumentation(this IServiceCollection services, IConfiguration configuration)
         {
-            var meterName = configuration["OrderInstrumentationMeterName"]?.ToLowerInvariant() ?? throw new NullReferenceException("MetricsInstrumentation  meter missing a name");
             services
                 .AddOpenTelemetry()
                 .WithMetrics(metrics => metrics
@@ -166,13 +170,28 @@ namespace Host.Extensions
             return services;
         }
 
+        public static IServiceCollection Notifications(this IServiceCollection services, IEndpointRouteBuilder endpoints)
+        {
+            services.AddSignalR();            
+            return services;
+        }
+
+        public static IEndpointRouteBuilder UseNotifications(this IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapHub<NotificationHub>("/notifications", options =>
+            {
+                options.CloseOnAuthenticationExpiration = true;
+            });
+            return endpoints;
+        }
+
         internal static IServiceCollection AddExceptionMiddleware(this IServiceCollection services) =>
        services.AddScoped<ExceptionMiddleware>();
 
         internal static IApplicationBuilder UseExceptionMiddleware(this IApplicationBuilder app) =>
             app.UseMiddleware<ExceptionMiddleware>();
 
-        internal static IServiceCollection AddRequestLogging(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddRequestLogging(this IServiceCollection services, IConfiguration config)
         {
             if (GetMiddlewareSettings(config).EnableHttpsLogging)
             {
@@ -183,7 +202,7 @@ namespace Host.Extensions
             return services;
         }
 
-        internal static IApplicationBuilder UseRequestLogging(this IApplicationBuilder app, IConfiguration config)
+        public static IApplicationBuilder UseRequestLogging(this IApplicationBuilder app, IConfiguration config)
         {
             if (GetMiddlewareSettings(config).EnableHttpsLogging)
             {
