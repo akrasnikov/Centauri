@@ -40,8 +40,11 @@ namespace Host.Middleware
                     case KeyNotFoundException:
                         // not found error
                         response.StatusCode = (int)HttpStatusCode.NotFound;
-                        break;                    
+                        break;
 
+                    case BadHttpRequestException:
+                        response.StatusCode= (int)HttpStatusCode.BadRequest;
+                        break ;
                     default:
                         // unhandled error
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;

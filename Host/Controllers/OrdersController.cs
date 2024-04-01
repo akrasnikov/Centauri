@@ -1,6 +1,6 @@
 ﻿using Host.Entities;
 using Host.Interfaces;
-using Host.Metrics;
+using Host.Models;
 using Host.Requests;
 using Host.Wrappers;
 using Microsoft.AspNetCore.Mvc;
@@ -10,16 +10,14 @@ namespace Host.Controllers
     public class OrdersController : Controller
     {
         private readonly IOrderService _aggregator;
-        private readonly MetricsInstrumentation _instrumentation;
 
-        public OrdersController(IOrderService aggregator, MetricsInstrumentation instrumentation)
+        public OrdersController(IOrderService aggregator)
         {
             _aggregator = aggregator ?? throw new ArgumentNullException(nameof(aggregator));
-            _instrumentation = instrumentation ?? throw new ArgumentNullException(nameof(instrumentation));
         }
 
         [ProducesResponseType(typeof(Response<Order>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response<Order>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost("order/{id}")]
         public async Task<IActionResult> CreateAsync([FromBody] SearchRequest request)
@@ -30,15 +28,14 @@ namespace Host.Controllers
 
 
         // TODO добавить pagging
-        [ProducesResponseType(typeof(IReadOnlyCollection<Order>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response<Order>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AggregatedDataModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet("orders/")]
         public async Task<IActionResult> GetAsync([FromQuery] string id)
         {
-            _instrumentation.AddOrder();
-            //var response = await _aggregator.GetFlightsAsync(request, HttpContext.RequestAborted);
-            return Ok("hello" );
+           var response = await _aggregator.GetAsync(id, HttpContext.RequestAborted);
+            return Ok(response);
         }
     }
 }

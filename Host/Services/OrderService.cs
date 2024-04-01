@@ -1,8 +1,9 @@
 ﻿using Hangfire;
+using Host.Caching;
 using Host.Entities;
-using Host.Infrastructure;
 using Host.Infrastructure.Integrations;
 using Host.Interfaces;
+using Host.Models;
 using Host.Options;
 using Host.Requests;
 using Microsoft.Extensions.Options;
@@ -11,36 +12,40 @@ namespace Host.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly IBackgroundJobClient _background;
+        private readonly IBackgroundJobClient _job;
         private readonly IntegrationClient _integration;
-        private readonly IOptions<IntegrationOptions> _options;
+        private readonly ICacheService _cacheService;
         private readonly ILogger<OrderService> _logger;
 
         public OrderService(
-            IBackgroundJobClient background,
+            IBackgroundJobClient job,
             ILogger<OrderService> logger,
             IntegrationClient orderIntegration,
-            IOptions<IntegrationOptions> options)
+            IOptions<IntegrationOptions> options,
+            ICacheService cacheService)
         {
-            _background = background ?? throw new ArgumentNullException(nameof(background));
+            _job = job ?? throw new ArgumentNullException(nameof(job));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _integration = orderIntegration ?? throw new ArgumentNullException(nameof(orderIntegration));
-            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
         }
 
         public async Task<Order> CreateAsync(SearchRequest request, CancellationToken cancellationToken = default)
         {
-            using var requestMessage = RequestMessageFactory.Create(HttpMethod.Get, null, "", _options);
-
-            var response = await _integration.SendAsync<Order>(requestMessage, cancellationToken);
-             
-
-            return default;
+            var order = new Order()
+            {
+                Id = Guid.NewGuid(),
+                From = request.From,
+                To = request.To,
+                Time = request.Time
+            };
+            _job.Enqueue(() => _integration.SendAsync(order, cancellationToken));
+            return await Task.FromResult(order);
         }
 
-        public Task<IReadOnlyCollection<Order>> GetAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<AggregatedDataModel> GetAsync(string id, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+          return await _cacheService.GetAsync<AggregatedDataModel>(id, cancellationToken) ?? throw new BadHttpRequestException("no key exists");           
         }
 
 
