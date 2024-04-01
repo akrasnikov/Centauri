@@ -5,6 +5,7 @@ using Host.Infrastructure.Notifications;
 using Host.Metrics;
 using Host.Models;
 using Host.Options;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
@@ -18,6 +19,7 @@ namespace Host.Infrastructure.Integrations
         private readonly INotificationService _notificationService;
         private readonly MetricsInstrumentation _instrumentation;
         private readonly IntegrationOptions _options;
+        private readonly List<RequestInfo> _requests;
         private readonly ILogger<IntegrationClient> _logger;
 
         private const string prefix = "orders:";
@@ -39,20 +41,37 @@ namespace Host.Infrastructure.Integrations
             _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
             _notificationService = notification ?? throw new ArgumentNullException(nameof(notification));
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+            _requests = options.Value.Requests ?? throw new ArgumentNullException(nameof(options));
         }
-     
+
+
+
+        public List<string> RequestFromOptions(Order order)
+        {
+            var results = new List<string>();
+
+            foreach (var request in _requests)
+            {
+                var url = $"{request.Url}?from={order.From}&to={order.To}&time={order.Time}";
+                results.Add(url);
+            }
+
+            return results;
+        }
 
         public async Task<string> SendAsync(Order order, CancellationToken cancellationToken = default)
         {
             int batchSize = 10;
-             
-            var urls = new string[]
-            {
-                $"https://api.example.com/endpoint1&{order.From}&{order.To}&{order.Time}",
-                $"https://api.example.com/endpoint2&{order.From}&{order.To}&{order.Time}"
-            };
 
-            int totalBatches = (int)Math.Ceiling((double)urls.Length / batchSize);
+            //var urls = new string[]
+            //{
+            //    $"https://api.example.com/endpoint1&{order.From}&{order.To}&{order.Time}",
+            //    $"https://api.example.com/endpoint2&{order.From}&{order.To}&{order.Time}"
+            //};
+
+            var urls = RequestFromOptions(order);
+
+            int totalBatches = (int)Math.Ceiling((double)urls.Count / batchSize);
 
             for (int batchIndex = 0; batchIndex < totalBatches; batchIndex++)
             {
@@ -79,9 +98,9 @@ namespace Host.Infrastructure.Integrations
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string body = await response.Content.ReadAsStringAsync(cancellationToken) ?? throw new InvalidOperationException("reason content");                    
+                    string body = await response.Content.ReadAsStringAsync(cancellationToken) ?? throw new InvalidOperationException("reason content");
 
-                    var order = JsonSerializer.Deserialize<Order>(body) ?? throw new InvalidOperationException("reason deserialize");                    
+                    var order = JsonSerializer.Deserialize<Order>(body) ?? throw new InvalidOperationException("reason deserialize");
 
                     string chacheKey = $"{prefix}:{url}";
 
@@ -91,12 +110,12 @@ namespace Host.Infrastructure.Integrations
 
                     model.ProgressCounter++;
 
-                    await _cacheService.SetAsync<OrdersModel>(chacheKey, model, TimeSpan.FromMinutes(expiration), cancellationToken);                    
+                    await _cacheService.SetAsync<OrdersModel>(chacheKey, model, TimeSpan.FromMinutes(expiration), cancellationToken);
 
                     await _notificationService.BroadcastAsync(new BasicNotification()
                     {
                         Message = $" progress: {model.ProgressCounter}"
-                    }, 
+                    },
                     cancellationToken);
 
                     _logger.LogInformation("response received: " + body);
@@ -107,7 +126,7 @@ namespace Host.Infrastructure.Integrations
                 _logger.LogError($"request to {url} failed with status code {response.StatusCode}");
 
             }
-            catch(InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
                 _logger.LogError($"error sending request to {url}: {ex.Message}");
             }
@@ -115,7 +134,7 @@ namespace Host.Infrastructure.Integrations
             {
                 _logger.LogError($"error sending request to {url}: {ex.Message}");
             }
-        } 
+        }
 
         [Experimental(diagnosticId: "for_parallel_request")]
         public async ValueTask<T> SendAsync<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) where T : class
