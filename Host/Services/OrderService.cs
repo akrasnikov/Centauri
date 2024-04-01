@@ -43,30 +43,10 @@ namespace Host.Services
             return await Task.FromResult(order);
         }
 
-        public async Task<AggregatedDataModel> GetAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<OrdersModel> GetAsync(string id, CancellationToken cancellationToken = default)
         {
-          return await _cacheService.GetAsync<AggregatedDataModel>(id, cancellationToken) ?? throw new BadHttpRequestException("no key exists");           
-        }
-
-
-        public async Task<IEnumerable<Order>> GetOrdersWithBatches(IEnumerable<int> userIds)
-        {
-            var tasks = new List<Task<IEnumerable<Order>>>();
-            var batchSize = 100;
-            int numberOfBatches = (int)Math.Ceiling((double)userIds.Count() / batchSize);
-
-            for (int i = 0; i < numberOfBatches; i++)
-            {
-                var currentIds = userIds.Skip(i * batchSize).Take(batchSize);
-                //tasks.Add(_ntegration.GetOrder(currentIds));
-            }
-
-            return (await Task.WhenAll(tasks)).SelectMany(u => u);
-        }
-
-        [Queue("default")]
-        private void EmptyDefault()
-        {
-        }
+          return await _cacheService.GetAsync<OrdersModel>(id, cancellationToken) ?? throw new BadHttpRequestException("no key exists");           
+        } 
+         
     }
 }

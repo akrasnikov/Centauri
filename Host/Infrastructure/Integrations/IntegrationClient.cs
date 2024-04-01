@@ -4,9 +4,9 @@ using Host.Exceptions;
 using Host.Infrastructure.Notifications;
 using Host.Metrics;
 using Host.Models;
+using Host.Options;
+using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 
 namespace Host.Infrastructure.Integrations
@@ -17,12 +17,19 @@ namespace Host.Infrastructure.Integrations
         private readonly ICacheService _cacheService;
         private readonly INotificationService _notificationService;
         private readonly MetricsInstrumentation _instrumentation;
+        private readonly IntegrationOptions _options;
         private readonly ILogger<IntegrationClient> _logger;
 
         private const string prefix = "orders:";
         private const double expiration = 1 /*minute*/;
 
-        public IntegrationClient(HttpClient client, MetricsInstrumentation instrumentation, ILogger<IntegrationClient> logger, ICacheService cacheService, INotificationService notificationService)
+        public IntegrationClient(
+            HttpClient client,
+            MetricsInstrumentation instrumentation,
+            ILogger<IntegrationClient> logger,
+            ICacheService cacheService,
+            INotificationService notification,
+            IOptions<IntegrationOptions> options)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _instrumentation = instrumentation ?? throw new ArgumentNullException(nameof(instrumentation));
@@ -30,73 +37,85 @@ namespace Host.Infrastructure.Integrations
             _client.Timeout = new TimeSpan(0, 10, 0);
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
-            _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+            _notificationService = notification ?? throw new ArgumentNullException(nameof(notification));
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         }
+     
 
         public async Task<string> SendAsync(Order order, CancellationToken cancellationToken = default)
         {
             int batchSize = 10;
-            // List of URLs to send requests to
+             
             var urls = new string[]
             {
-                $"https://api.example.com/endpoint1&{order.From}&{order.To}&{order.Time} ",
-                $"https://api.example.com/endpoint2&{order.From}&{order.To}&{order.Time}",
+                $"https://api.example.com/endpoint1&{order.From}&{order.To}&{order.Time}",
+                $"https://api.example.com/endpoint2&{order.From}&{order.To}&{order.Time}"
             };
 
             int totalBatches = (int)Math.Ceiling((double)urls.Length / batchSize);
-            byte[] bytesKey = Encoding.UTF8.GetBytes($"{order.From}&{order.To}&{order.Time}");
-
-            var hashKey = SHA256.HashData(bytesKey);
-
-            string chacheKey = $"{prefix}:{hashKey}";
 
             for (int batchIndex = 0; batchIndex < totalBatches; batchIndex++)
             {
                 var batchUrls = urls.Skip(batchIndex * batchSize).Take(batchSize).ToList();
 
-                var requestTasks = new List<Task<HttpResponseMessage>>();
+                var tasks = new List<Task>();
 
-                foreach (var url in batchUrls) requestTasks.Add(_client.GetAsync(url, cancellationToken));
-
-                var responses = await Task.WhenAll(requestTasks).ConfigureAwait(false);
-
-                foreach (var response in responses)
+                foreach (var url in batchUrls)
                 {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string body = await response.Content.ReadAsStringAsync(cancellationToken);
-
-                        var orderDeserialize = JsonSerializer.Deserialize<Order>(body);
-
-                        if (orderDeserialize is null) continue;
-
-                        var model = await _cacheService.GetAsync<AggregatedDataModel>(chacheKey, cancellationToken) ?? new AggregatedDataModel();
-
-                        model.Items.Add(order);
-
-                        model.ProgressCounter++;
-
-                        await _cacheService.SetAsync<AggregatedDataModel>(chacheKey, model, TimeSpan.FromMinutes(expiration), cancellationToken);
-
-                        var message = new BasicNotification()
-                        {
-                            Message = $" progress: {model.ProgressCounter}"
-                        };
-
-                        await _notificationService.BroadcastAsync(message, cancellationToken);
-
-                        _logger.LogInformation("response received: " + body);
-
-                        _instrumentation.AddOrder();
-                    }
-                    _logger.LogInformation("request failed with status code: " + response.StatusCode);
+                    tasks.Add(ProcessRequestAsync(url, cancellationToken));
                 }
+
+                await Task.WhenAll(tasks).ConfigureAwait(false);
             }
-            return chacheKey;
+
+            return $"Orders sent for {order.From} to {order.To} at {order.Time}";
         }
 
+        private async Task ProcessRequestAsync(string url, CancellationToken cancellationToken)
+        {
+            try
+            {
+                using var response = await _client.GetAsync(url, cancellationToken);
 
+                if (response.IsSuccessStatusCode)
+                {
+                    string body = await response.Content.ReadAsStringAsync(cancellationToken) ?? throw new InvalidOperationException("reason content");                    
 
+                    var order = JsonSerializer.Deserialize<Order>(body) ?? throw new InvalidOperationException("reason deserialize");                    
+
+                    string chacheKey = $"{prefix}:{url}";
+
+                    var model = await _cacheService.GetAsync<OrdersModel>(chacheKey, cancellationToken) ?? new OrdersModel();
+
+                    model.Items.Add(order);
+
+                    model.ProgressCounter++;
+
+                    await _cacheService.SetAsync<OrdersModel>(chacheKey, model, TimeSpan.FromMinutes(expiration), cancellationToken);                    
+
+                    await _notificationService.BroadcastAsync(new BasicNotification()
+                    {
+                        Message = $" progress: {model.ProgressCounter}"
+                    }, 
+                    cancellationToken);
+
+                    _logger.LogInformation("response received: " + body);
+
+                    _instrumentation.AddOrder();
+                }
+
+                _logger.LogError($"request to {url} failed with status code {response.StatusCode}");
+
+            }
+            catch(InvalidOperationException ex)
+            {
+                _logger.LogError($"error sending request to {url}: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"error sending request to {url}: {ex.Message}");
+            }
+        } 
 
         [Experimental(diagnosticId: "for_parallel_request")]
         public async ValueTask<T> SendAsync<T>(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default) where T : class

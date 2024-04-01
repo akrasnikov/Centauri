@@ -2,12 +2,12 @@
 
 namespace Host.Models
 {
-    public class AggregatedDataModel
+    public class OrdersModel
     {
         public List<Order> Items { get; set; }
         public int ProgressCounter { get; set; }
 
-        public AggregatedDataModel()
+        public OrdersModel()
         {
             Items = [];
             ProgressCounter = 0;

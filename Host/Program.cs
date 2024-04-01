@@ -12,8 +12,7 @@ namespace Host
 
             // Add services to the container.
           
-            builder.Services.AddControllers();
-            builder.Services.AddCustomCors();
+            builder.Services.AddControllers();            
             builder.Services.AddServices();
             builder.Services.AddBackgroundService();
             builder.Services.AddIntegration(builder.Configuration);

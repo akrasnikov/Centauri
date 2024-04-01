@@ -28,7 +28,7 @@ namespace Host.Controllers
 
 
         // TODO добавить pagging
-        [ProducesResponseType(typeof(AggregatedDataModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OrdersModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet("orders/")]
