@@ -1,11 +1,14 @@
-﻿using Hangfire;
+﻿using Autofac;
+using Hangfire;
 using Hangfire.InMemory;
 using Host.Caching;
 using Host.Common.Interfaces;
 using Host.Infrastructure.Integrations;
 using Host.Infrastructure.Notifications;
+using Host.Logs;
 using Host.Middleware;
 using Host.Options;
+using Host.Services;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using System.Reflection;
@@ -56,8 +59,10 @@ namespace Host.Extensions
         //Change the CORS policy based on your requirements.
         //More info see: https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.0
 
-        public static void AddCustomCors(this IServiceCollection services)
+        public static void AddCustomCors(this IServiceCollection services, IContainer container)
         {
+            container.Register(i => new DummyLogger());
+            builder.RegisterType<DummyService>().As<IDummyService>().EnableInterfaceInterceptors().InterceptedBy(typeof(DummyLogger));
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll",
@@ -76,9 +81,11 @@ namespace Host.Extensions
         {
             //services.AddTransient<IOrderService, OrderService>();
             //services.AddSingleton<MetricsInstrumentation>();
-            services
-            .AddServices(typeof(ITransientService), ServiceLifetime.Transient)
-            .AddServices(typeof(IScopedService), ServiceLifetime.Scoped);
+
+            services.AddTransient<IDummyService, DummyService>();
+            //services
+            //.AddServices(typeof(ITransientService), ServiceLifetime.Transient)
+            //.AddServices(typeof(IScopedService), ServiceLifetime.Scoped);
         }
 
 
@@ -121,39 +128,39 @@ namespace Host.Extensions
 
         public static IServiceCollection AddCaching(this IServiceCollection services, IConfiguration config)
         {
-            var settings = config.GetSection(nameof(CacheSettings)).Get<CacheSettings>();
-            if (settings == null) return services;
-            if (settings.UseDistributedCache)
-            {
-                if (settings.PreferRedis)
-                {
-                    services.AddStackExchangeRedisCache(options =>
-                    {
-                        options.Configuration = settings.RedisURL;
-                        options.ConfigurationOptions = new StackExchange.Redis.ConfigurationOptions()
-                        {
-                            AbortOnConnectFail = true,
-                            EndPoints = { settings.RedisURL }
-                        };
-                    });
-                }
-                else
-                {
-                    services.AddDistributedMemoryCache();
-                }
+            //var settings = config.GetSection(nameof(CacheSettings)).Get<CacheSettings>();
+            //if (settings == null) return services;
+            //if (settings.UseDistributedCache)
+            //{
+            //    if (settings.PreferRedis)
+            //    {
+            //        services.AddStackExchangeRedisCache(options =>
+            //        {
+            //            options.Configuration = settings.RedisURL;
+            //            options.ConfigurationOptions = new StackExchange.Redis.ConfigurationOptions()
+            //            {
+            //                AbortOnConnectFail = true,
+            //                EndPoints = { settings.RedisURL }
+            //            };
+            //        });
+            //    }
+            //    else
+            //    {
+            //        services.AddDistributedMemoryCache();
+            //    }
 
-                services.AddTransient<ICacheService, DistributedCacheService>();
-            }
+            //    services.AddTransient<ICacheService, DistributedCacheService>();
+            //}
             return services;
         }
         public static IServiceCollection AddIntegration(this IServiceCollection services, IConfiguration configuration)
-        {  
+        {
             services.Configure<IntegrationOptions>(configuration);
             services.AddHttpClient<IntegrationClient>()
                   .AddStandardResilienceHandler(options =>
                     {
                         // Configure standard resilience options here
-                    });;
+                    }); ;
             return services;
         }
         public static IServiceCollection AddInstrumentation(this IServiceCollection services, IConfiguration configuration)
@@ -172,7 +179,7 @@ namespace Host.Extensions
 
         public static IServiceCollection Notifications(this IServiceCollection services, IEndpointRouteBuilder endpoints)
         {
-            services.AddSignalR();            
+            services.AddSignalR();
             return services;
         }
 
@@ -185,11 +192,9 @@ namespace Host.Extensions
             return endpoints;
         }
 
-        internal static IServiceCollection AddExceptionMiddleware(this IServiceCollection services) =>
-       services.AddScoped<ExceptionMiddleware>();
+        internal static IServiceCollection AddExceptionMiddleware(this IServiceCollection services) => services.AddScoped<ErrorHandlerMiddleware>();
 
-        internal static IApplicationBuilder UseExceptionMiddleware(this IApplicationBuilder app) =>
-            app.UseMiddleware<ExceptionMiddleware>();
+        internal static IApplicationBuilder UseExceptionMiddleware(this IApplicationBuilder app) => app.UseMiddleware<ErrorHandlerMiddleware>();
 
         public static IServiceCollection AddRequestLogging(this IServiceCollection services, IConfiguration config)
         {

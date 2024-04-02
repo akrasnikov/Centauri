@@ -1,6 +1,10 @@
 using Host.Extensions;
 using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
+using Autofac;
+using Host.Logs;
+using Autofac.Extensions.DependencyInjection;
+using Host.Services;
+
 
 namespace Host
 {
@@ -10,8 +14,8 @@ namespace Host
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-          
+           
+       
             builder.Services.AddControllers();            
             builder.Services.AddServices();
             builder.Services.AddBackgroundService();

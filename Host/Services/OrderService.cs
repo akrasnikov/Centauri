@@ -32,13 +32,8 @@ namespace Host.Services
 
         public async Task<Order> CreateAsync(SearchRequest request, CancellationToken cancellationToken = default)
         {
-            var order = new Order()
-            {
-                Id = Guid.NewGuid(),
-                From = request.From,
-                To = request.To,
-                Time = request.Time
-            };
+            var order = new OrdersModel(Guid.NewGuid().ToString(), request.From, request.To, request.Time);           
+           
             _job.Enqueue(() => _integration.SendAsync(order, cancellationToken));
             return await Task.FromResult(order);
         }

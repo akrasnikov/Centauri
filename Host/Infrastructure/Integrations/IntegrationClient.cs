@@ -5,7 +5,6 @@ using Host.Infrastructure.Notifications;
 using Host.Metrics;
 using Host.Models;
 using Host.Options;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
@@ -17,12 +16,10 @@ namespace Host.Infrastructure.Integrations
         private readonly HttpClient _client;
         private readonly ICacheService _cacheService;
         private readonly INotificationService _notificationService;
-        private readonly MetricsInstrumentation _instrumentation;
-        private readonly IntegrationOptions _options;
+        private readonly MetricsInstrumentation _instrumentation;       
         private readonly List<RequestInfo> _requests;
         private readonly ILogger<IntegrationClient> _logger;
-
-        private const string prefix = "orders:";
+        
         private const double expiration = 1 /*minute*/;
 
         public IntegrationClient(
@@ -40,58 +37,50 @@ namespace Host.Infrastructure.Integrations
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
             _notificationService = notification ?? throw new ArgumentNullException(nameof(notification));
-            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _requests = options.Value.Requests ?? throw new ArgumentNullException(nameof(options));
         }
 
 
 
-        public List<string> RequestFromOptions(Order order)
+        public List<string> RequestFromOptions(OrdersModel orders)
         {
             var results = new List<string>();
-
             foreach (var request in _requests)
             {
-                var url = $"{request.Url}?from={order.From}&to={order.To}&time={order.Time}";
+                var url = $"{request.Url}?from={orders.From}&to={orders.To}&time={orders.Time}";
                 results.Add(url);
             }
-
             return results;
         }
 
-        public async Task<string> SendAsync(Order order, CancellationToken cancellationToken = default)
+        public async Task SendAsync(OrdersModel orders, CancellationToken cancellationToken = default)
         {
             int batchSize = 10;
-
-            //var urls = new string[]
-            //{
-            //    $"https://api.example.com/endpoint1&{order.From}&{order.To}&{order.Time}",
-            //    $"https://api.example.com/endpoint2&{order.From}&{order.To}&{order.Time}"
-            //};
-
-            var urls = RequestFromOptions(order);
-
-            int totalBatches = (int)Math.Ceiling((double)urls.Count / batchSize);
-
+            var urls = RequestFromOptions(orders);
+            int totalBatches = (int)Math.Ceiling((double)urls.Count / batchSize);           
             for (int batchIndex = 0; batchIndex < totalBatches; batchIndex++)
             {
-                var batchUrls = urls.Skip(batchIndex * batchSize).Take(batchSize).ToList();
+                var batchs = urls.Skip(batchIndex * batchSize).Take(batchSize).ToList();
 
                 var tasks = new List<Task>();
-
-                foreach (var url in batchUrls)
+                foreach (var url in batchs)
                 {
-                    tasks.Add(ProcessRequestAsync(url, cancellationToken));
+                    tasks.Add(ProcessRequestAsync(url, orders, cancellationToken));
                 }
-
                 await Task.WhenAll(tasks).ConfigureAwait(false);
             }
-
-            return $"Orders sent for {order.From} to {order.To} at {order.Time}";
         }
 
-        private async Task ProcessRequestAsync(string url, CancellationToken cancellationToken)
+        private async Task ProcessRequestAsync(string url, OrdersModel model, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new ArgumentException($"'{nameof(url)}' cannot be null or empty.", nameof(url));
+            }
+            if (model is null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
             try
             {
                 using var response = await _client.GetAsync(url, cancellationToken);
@@ -102,25 +91,18 @@ namespace Host.Infrastructure.Integrations
 
                     var order = JsonSerializer.Deserialize<Order>(body) ?? throw new InvalidOperationException("reason deserialize");
 
-                    string chacheKey = $"{prefix}:{url}";
+                    model.Add(order);
 
-                    var model = await _cacheService.GetAsync<OrdersModel>(chacheKey, cancellationToken) ?? new OrdersModel();
+                    _instrumentation.AddOrder();
 
-                    model.Items.Add(order);
-
-                    model.ProgressCounter++;
-
-                    await _cacheService.SetAsync<OrdersModel>(chacheKey, model, TimeSpan.FromMinutes(expiration), cancellationToken);
+                    await _cacheService.SetAsync<OrdersModel>(model.Id, model, TimeSpan.FromMinutes(expiration), cancellationToken);
 
                     await _notificationService.BroadcastAsync(new BasicNotification()
                     {
                         Message = $" progress: {model.ProgressCounter}"
-                    },
-                    cancellationToken);
+                    }, cancellationToken);
 
                     _logger.LogInformation("response received: " + body);
-
-                    _instrumentation.AddOrder();
                 }
 
                 _logger.LogError($"request to {url} failed with status code {response.StatusCode}");
