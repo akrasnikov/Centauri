@@ -2,7 +2,8 @@
 
 namespace Host.Requests
 {
-    public class SearchRequest
+#nullable disable
+    public class OrderRequest
     {  
         [Required] public DateTime Time { get; set; }
         [Required] public string From { get; set; }

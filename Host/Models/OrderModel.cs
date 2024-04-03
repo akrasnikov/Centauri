@@ -1,6 +1,7 @@
-﻿namespace Host.Entities
+﻿namespace Host.Models
 {
-    public class Order
+#nullable disable
+    public class OrderModel
     {
         public Guid Id { get; set; }
         public DateTime Time { get; set; }

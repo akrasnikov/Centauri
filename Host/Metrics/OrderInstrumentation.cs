@@ -2,7 +2,7 @@
 
 namespace Host.Metrics
 {
-    public class MetricsInstrumentation
+    public class OrderInstrumentation
     {       
         private Counter<int> OrdersCounter { get; }
 
@@ -13,7 +13,7 @@ namespace Host.Metrics
         private Histogram<double> OrdersPriceHistogram { get; }
       
 
-        public MetricsInstrumentation(IMeterFactory meterFactory, IConfiguration configuration)
+        public OrderInstrumentation(IMeterFactory meterFactory, IConfiguration configuration)
         {
             var meter = meterFactory.Create("orders.meter");
 

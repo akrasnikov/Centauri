@@ -1,11 +1,8 @@
 ﻿using Autofac;
 using Hangfire;
 using Hangfire.InMemory;
-using Host.Caching;
-using Host.Common.Interfaces;
-using Host.Infrastructure.Integrations;
+using Host.Infrastructure.HttpClients;
 using Host.Infrastructure.Notifications;
-using Host.Logs;
 using Host.Middleware;
 using Host.Options;
 using Host.Services;
@@ -61,8 +58,8 @@ namespace Host.Extensions
 
         public static void AddCustomCors(this IServiceCollection services, IContainer container)
         {
-            container.Register(i => new DummyLogger());
-            builder.RegisterType<DummyService>().As<IDummyService>().EnableInterfaceInterceptors().InterceptedBy(typeof(DummyLogger));
+            //container.Register(i => new DummyLogger());
+            //builder.RegisterType<DummyService>().As<IDummyService>().EnableInterfaceInterceptors().InterceptedBy(typeof(DummyLogger));
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll",
@@ -220,6 +217,9 @@ namespace Host.Extensions
 
         private static MiddlewareSettings GetMiddlewareSettings(IConfiguration config) =>
        config.GetSection(nameof(MiddlewareSettings)).Get<MiddlewareSettings>()!;
+
+        private static IEndpointConventionBuilder MapHealthCheck(this IEndpointRouteBuilder endpoints) =>
+        endpoints.MapHealthChecks("/api/health");
 
     }
 

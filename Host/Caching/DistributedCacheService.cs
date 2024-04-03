@@ -1,12 +1,11 @@
-using System.Text;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Logging;
 using Host.Common.Interfaces;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text;
 
 namespace Host.Caching;
 
 #pragma warning disable CA2254
-public class DistributedCacheService : ICacheService
+public class DistributedCacheService : ICacheService, ITransientService
 {
     private readonly IDistributedCache _cache;
     private readonly ILogger<DistributedCacheService> _logger;
@@ -50,18 +49,6 @@ public class DistributedCacheService : ICacheService
             return null;
         }
     }
-
-    public void Refresh(string key)
-    {
-        try
-        {
-            _cache.Refresh(key);
-        }
-        catch
-        {
-        }
-    }
-
     public async Task RefreshAsync(string key, CancellationToken token = default)
     {
         try
@@ -74,42 +61,6 @@ public class DistributedCacheService : ICacheService
         }
     }
 
-    public void Remove(string key)
-    {
-        try
-        {
-            _cache.Remove(key);
-        }
-        catch
-        {
-        }
-    }
-
-    public async Task RemoveAsync(string key, CancellationToken token = default)
-    {
-        try
-        {
-            await _cache.RemoveAsync(key, token);
-        }
-        catch
-        {
-        }
-    }
-
-    public void Set<T>(string key, T value, TimeSpan? slidingExpiration = null) =>
-        Set(key, Serialize(value), slidingExpiration);
-
-    private void Set(string key, byte[] value, TimeSpan? slidingExpiration = null)
-    {
-        try
-        {
-            _cache.Set(key, value, GetOptions(slidingExpiration));
-            _logger.LogDebug($"Added to Cache : {key}");
-        }
-        catch
-        {
-        }
-    }
 
     public Task SetAsync<T>(string key, T value, TimeSpan? slidingExpiration = null, CancellationToken cancellationToken = default) =>
         SetAsync(key, Serialize(value), slidingExpiration, cancellationToken);
@@ -132,19 +83,17 @@ public class DistributedCacheService : ICacheService
     private T Deserialize<T>(byte[] cachedData) =>
         _serializer.Deserialize<T>(Encoding.Default.GetString(cachedData));
 
-    private static DistributedCacheEntryOptions GetOptions(TimeSpan? slidingExpiration)
+    private static DistributedCacheEntryOptions GetOptions(TimeSpan? expiration)
     {
         var options = new DistributedCacheEntryOptions();
-        if (slidingExpiration.HasValue)
+        if (expiration.HasValue)
         {
-            options.SetSlidingExpiration(slidingExpiration.Value);
+            options.SetAbsoluteExpiration(expiration.Value);
         }
         else
-        {
-            // TODO: add to appsettings?
-            options.SetSlidingExpiration(TimeSpan.FromMinutes(10)); // Default expiration time of 10 minutes.
+        {        
+            options.SetAbsoluteExpiration(TimeSpan.FromMinutes(10)); // Default expiration time of 10 minutes.
         }
-
         return options;
     }
 }

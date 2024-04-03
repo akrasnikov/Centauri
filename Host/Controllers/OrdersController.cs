@@ -1,15 +1,12 @@
-﻿using Host.Entities;
-using Host.Interfaces;
-using Host.Logs;
+﻿using Host.Logs;
 using Host.Models;
-using Host.Requests;
 using Host.Services;
 using Host.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Host.Controllers
 {
-    [Log]
+    [CustomLog]
     public class OrdersController : Controller
     {
         private readonly IDummyService _orderService;
@@ -23,7 +20,7 @@ namespace Host.Controllers
         //[ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[HttpPost("order/{id}")]
-        //public async Task<IActionResult> CreateAsync([FromBody] SearchRequest request)
+        //public async Task<IActionResult> CreateAsync([FromBody] OrderRequest request)
         //{
         //    var response = await _orderService.CreateAsync(request, HttpContext.RequestAborted);
         //    return Ok(response);            

@@ -1,4 +1,6 @@
-﻿using Host.Entities;
+﻿using Host.Infrastructure.Notifications;
+using Host.Metrics;
+using System.Threading;
 
 namespace Host.Models
 {
@@ -8,14 +10,20 @@ namespace Host.Models
         public string To { get; set; }
         public string From { get; set; }
         public DateTime Time { get; set; }
-        public List<Order> Items { get; }
-        public int ProgressCounter { get; set; }
+        public List<OrderModel> Items { get; }
+        public int Progress { get; set; }
 
-        public void Add(Order order)
+        public async Task AddAsync(OrderModel order, OrderInstrumentation instrumentation, INotificationService notification, CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(order);
+            ArgumentNullException.ThrowIfNull(order);           
             Items.Add(order);
-            ProgressCounter++;
+            Progress++;
+
+            instrumentation.AddOrder();
+            await notification.BroadcastAsync(new BasicNotification()
+            {
+                Message = $" progress: {Progress}"
+            }, cancellationToken);
         }
 
         public OrdersModel(string id, string from, string to, DateTime time)
@@ -25,7 +33,7 @@ namespace Host.Models
             From = from ?? throw new ArgumentNullException(nameof(from));
             Time = time;
             Items = [];
-            ProgressCounter = 0;
+            Progress = 0;
         }
     }
 }

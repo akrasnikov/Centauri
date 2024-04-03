@@ -10,9 +10,17 @@
 
   <ItemGroup>
     <Compile Remove="Containers\**" />
+    <Compile Remove="Responses\**" />
     <Content Remove="Containers\**" />
+    <Content Remove="Responses\**" />
     <EmbeddedResource Remove="Containers\**" />
+    <EmbeddedResource Remove="Responses\**" />
     <None Remove="Containers\**" />
+    <None Remove="Responses\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="postsharp.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +30,8 @@
 	  <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
 
 	  <PackageReference Include="Autofac.Extras.DynamicProxy" Version="7.1.0" />
+
+	  <PackageReference Include="Figgle" Version="0.5.1" />
 
 	  <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.3.0" />
 
@@ -40,13 +50,26 @@
     <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.4.0-rc.4" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.7.0" />
     <PackageReference Include="PostSharp" Version="2024.0.6" />
+    <PackageReference Include="PostSharp.Patterns.Diagnostics" Version="2024.0.6" />
+    <PackageReference Include="PostSharp.Patterns.Diagnostics.Serilog" Version="2024.0.6" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0" />
+    <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />
+    <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+    <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+    <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
+    <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Responses\" />
+    <Folder Include="LogFiles\Application\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="postsharp.config" />
   </ItemGroup>
 
 </Project>

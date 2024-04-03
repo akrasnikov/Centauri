@@ -1,7 +1,6 @@
 ﻿using Hangfire;
 using Host.Caching;
-using Host.Entities;
-using Host.Infrastructure.Integrations;
+using Host.Infrastructure.HttpClients;
 using Host.Interfaces;
 using Host.Models;
 using Host.Options;
@@ -30,12 +29,13 @@ namespace Host.Services
             _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
         }
 
-        public async Task<Order> CreateAsync(SearchRequest request, CancellationToken cancellationToken = default)
+        public async Task<OrdersModel> CreateAsync(OrderRequest request, CancellationToken cancellationToken = default)
         {
-            var order = new OrdersModel(Guid.NewGuid().ToString(), request.From, request.To, request.Time);           
+            var order = new OrdersModel($"{Guid.NewGuid()}", request.From, request.To, request.Time);           
            
             _job.Enqueue(() => _integration.SendAsync(order, cancellationToken));
-            return await Task.FromResult(order);
+
+            return order;
         }
 
         public async Task<OrdersModel> GetAsync(string id, CancellationToken cancellationToken = default)
