@@ -1,10 +1,12 @@
 ﻿using Host.Options;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
 
 namespace Host.Infrastructure
 {
+    [Experimental("request_message_factory")]
     public sealed class RequestMessageFactory
     {
         public static HttpRequestMessage Create<T>(

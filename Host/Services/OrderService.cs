@@ -1,5 +1,5 @@
 ﻿using Hangfire;
-using Host.Caching;
+using Host.Infrastructure.Caching;
 using Host.Infrastructure.HttpClients;
 using Host.Interfaces;
 using Host.Models;

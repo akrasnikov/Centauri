@@ -1,4 +1,4 @@
-namespace Host.Caching;
+namespace Host.Infrastructure.Caching;
 
 public class CacheSettings
 {

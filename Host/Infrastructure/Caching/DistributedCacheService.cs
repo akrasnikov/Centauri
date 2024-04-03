@@ -2,7 +2,7 @@ using Host.Common.Interfaces;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text;
 
-namespace Host.Caching;
+namespace Host.Infrastructure.Caching;
 
 #pragma warning disable CA2254
 public class DistributedCacheService : ICacheService, ITransientService
@@ -91,7 +91,7 @@ public class DistributedCacheService : ICacheService, ITransientService
             options.SetAbsoluteExpiration(expiration.Value);
         }
         else
-        {        
+        {
             options.SetAbsoluteExpiration(TimeSpan.FromMinutes(10)); // Default expiration time of 10 minutes.
         }
         return options;

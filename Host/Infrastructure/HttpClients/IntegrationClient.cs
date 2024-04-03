@@ -1,6 +1,6 @@
-﻿using Host.Caching;
-using Host.Exceptions;
+﻿using Host.Exceptions;
 using Host.Extensions;
+using Host.Infrastructure.Caching;
 using Host.Infrastructure.Notifications;
 using Host.Metrics;
 using Host.Models;
