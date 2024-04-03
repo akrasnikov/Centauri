@@ -8,6 +8,8 @@ using Host.Options;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
+using System.Linq;
+using Host.Extensions;
 
 namespace Host.Infrastructure.Integrations
 {
@@ -31,33 +33,27 @@ namespace Host.Infrastructure.Integrations
             IOptions<IntegrationOptions> options)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
-            _instrumentation = instrumentation ?? throw new ArgumentNullException(nameof(instrumentation));
-
-            _client.Timeout = new TimeSpan(0, 10, 0);
+            _instrumentation = instrumentation ?? throw new ArgumentNullException(nameof(instrumentation));             
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
             _notificationService = notification ?? throw new ArgumentNullException(nameof(notification));
             _requests = options.Value.Requests ?? throw new ArgumentNullException(nameof(options));
         }
 
-
-
         public List<string> RequestFromOptions(OrdersModel orders)
         {
-            var results = new List<string>();
-            foreach (var request in _requests)
-            {
-                var url = $"{request.Url}?from={orders.From}&to={orders.To}&time={orders.Time}";
-                results.Add(url);
-            }
-            return results;
+            return _requests.Select(request => $"{request.Url}?from={orders.From}&to={orders.To}&time={orders.Time}").ToList();
         }
 
         public async Task SendAsync(OrdersModel orders, CancellationToken cancellationToken = default)
         {
             int batchSize = 10;
             var urls = RequestFromOptions(orders);
-            int totalBatches = (int)Math.Ceiling((double)urls.Count / batchSize);           
+
+            int totalBatches = (int)Math.Ceiling((double)urls.Count / batchSize);
+
+            var batches = urls.Batch(batchSize);
+
             for (int batchIndex = 0; batchIndex < totalBatches; batchIndex++)
             {
                 var batchs = urls.Skip(batchIndex * batchSize).Take(batchSize).ToList();
