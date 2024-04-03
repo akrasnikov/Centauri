@@ -3,10 +3,10 @@ using PostSharp.Aspects;
 using PostSharp.Serialization;
 using System.Diagnostics;
 
-namespace Host.Logs
+namespace Host.PostSharp
 {
     [PSerializable]
-    public class Log : OnMethodBoundaryAspect
+    public class CustomLog : OnMethodBoundaryAspect
     {
         /// <summary>
         /// Method executed before the body of methods to which this aspect is applied.
@@ -14,13 +14,13 @@ namespace Host.Logs
         /// <param name="args"></param>
         public override void OnEntry(MethodExecutionArgs args)
         {
-           
-            var logDescription = $"instance:{args.Instance} -> methodName:{args.Method.Name} -> Starting.";
+
+            var logDescription = $"instance:{args.Instance} -> methodName:{args.Method.Name} -> Starting world.";
 
             if (args.Arguments != null && args.Arguments.Count > 0)
             {
                 var parameters = args.Method.GetParameters().ToDictionary(key => key.Name, value => args?.Arguments[value.Position]);
-                
+
                 logDescription += $" args: {JsonConvert.SerializeObject(parameters)}";
             }
 
@@ -44,12 +44,12 @@ namespace Host.Logs
         /// <param name="args"></param>
         public override void OnExit(MethodExecutionArgs args)
         {
-            var logDescription = $"instance:{args.Instance} -> methodName:{args.Method.Name} -> Exited.";         
+            var logDescription = $"instance:{args.Instance} -> methodName:{args.Method.Name} -> Exited.";
 
             if (args.Arguments != null && args.Arguments.Count > 0)
             {
                 var parameters = args.ReturnValue;
-              
+
                 logDescription += $" returnValue: {JsonConvert.SerializeObject(parameters)}";
             }
             Debug.WriteLine(logDescription);
