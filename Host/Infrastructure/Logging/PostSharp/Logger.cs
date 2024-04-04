@@ -1,4 +1,4 @@
-﻿namespace Host.PostSharp
+﻿namespace Host.Infrastructure.Logging.PostSharp
 {
     public static class Logger
     {

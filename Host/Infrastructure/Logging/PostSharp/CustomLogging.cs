@@ -3,7 +3,7 @@ using PostSharp.Aspects;
 using PostSharp.Serialization;
 using System.Diagnostics;
 
-namespace Host.PostSharp
+namespace Host.Infrastructure.Logging.PostSharp
 {
     [PSerializable]
     public class CustomLogging : OnMethodBoundaryAspect

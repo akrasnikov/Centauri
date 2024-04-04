@@ -1,7 +1,7 @@
 ﻿using PostSharp.Aspects;
 using System.Text;
 
-namespace Host.PostSharp
+namespace Host.Infrastructure.Logging.PostSharp
 {
     public static class Formatter
     {

@@ -6,7 +6,7 @@ using System.Text;
 using ILogger = Serilog.ILogger;
 
 
-namespace Host.PostSharp
+namespace Host.Infrastructure.Logging.PostSharp
 {
     [PSerializable]
     [LinesOfCodeAvoided(6)]
@@ -18,7 +18,7 @@ namespace Host.PostSharp
         /// </summary>
         /// <param name="args">Method execution context.</param>
         public override void OnEntry(MethodExecutionArgs args)
-        {          
+        {
             var stringBuilder = new StringBuilder();
 
             stringBuilder.Append("Entering ");
