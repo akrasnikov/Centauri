@@ -1,25 +1,23 @@
-﻿using Host.Logs;
+﻿using Host.Extensions;
 using Host.Models;
-using Host.Services;
 using Host.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Host.Controllers
 {
-    [CustomLog]
+
     public class OrdersController : Controller
     {
-        private readonly IDummyService _orderService;
-
-        public OrdersController(IDummyService orderService)
+        private readonly IDummyService _dummyService;
+        public OrdersController(IDummyService dummyService)
         {
-            _orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
+            _dummyService = dummyService;
         }
 
         //[ProducesResponseType(typeof(Response<Order>), StatusCodes.Status200OK)]
         //[ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[HttpPost("order/{id}")]
+        //[HttpPost("orders/order")]
         //public async Task<IActionResult> CreateAsync([FromBody] OrderRequest request)
         //{
         //    var response = await _orderService.CreateAsync(request, HttpContext.RequestAborted);
@@ -31,11 +29,11 @@ namespace Host.Controllers
         [ProducesResponseType(typeof(OrdersModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet("orders/")]
+        [HttpGet("orders/{id}")]
         public async Task<IActionResult> GetAsync([FromQuery] string id)
         {
-           var response =  _orderService.Message("hello");
-            return Ok(response);
+           var response = _dummyService.Message("hello");
+            return Ok();
         }
     }
 }
