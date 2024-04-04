@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace Host.PostSharp
 {
     [PSerializable]
-    public class CustomLog : OnMethodBoundaryAspect
+    public class CustomLogging : OnMethodBoundaryAspect
     {
         /// <summary>
         /// Method executed before the body of methods to which this aspect is applied.
