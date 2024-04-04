@@ -1,6 +1,6 @@
 using Host.Configurations;
 using Host.Extensions;
-using Host.Infrastructure.Logging.Serilog;
+using Host.Infrastructure.Logging;
 using OpenTelemetry.Metrics;
 using PostSharp.Patterns.Diagnostics;
 using PostSharp.Patterns.Diagnostics.Backends.Serilog;
@@ -9,7 +9,7 @@ using Serilog;
 [assembly: Log]
 namespace Host
 {
-  
+
     public class Program
     {
         public static void Main(string[] args)

@@ -1,18 +1,16 @@
 using Figgle;
 using Microsoft.Extensions.Options;
-using PostSharp.Patterns.Diagnostics.Backends.Serilog;
-using PostSharp.Patterns.Diagnostics;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Formatting.Compact;
 
-namespace Host.Infrastructure.Logging.Serilog;
+namespace Host.Infrastructure.Logging;
 
-public static class Extensions
+public static class Startup
 {
     public static void RegisterSerilog(this WebApplicationBuilder builder)
-    {  
+    {
 
         builder.Services.AddOptions<LoggerSettings>().BindConfiguration(nameof(LoggerSettings));
 

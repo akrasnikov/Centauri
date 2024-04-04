@@ -1,8 +1,5 @@
 ﻿using Autofac;
-using Hangfire;
-using Hangfire.InMemory;
 using Host.Infrastructure.HttpClients;
-using Host.Infrastructure.Notifications;
 using Host.Middleware;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -13,21 +10,7 @@ namespace Host.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void UseSwaggerExtension(this IApplicationBuilder app)
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Centauri.Host");
-            });
-        }
-
-        public static void UseErrorHandlingMiddleware(this IApplicationBuilder app)
-        {
-            app.UseMiddleware<ErrorHandlerMiddleware>();
-        }
-
-        public static void AddControllersExtension(this IServiceCollection services)
+              public static void AddControllersExtension(this IServiceCollection services)
         {
             services.AddControllers()
                 .AddJsonOptions(options =>
@@ -36,23 +19,7 @@ namespace Host.Extensions
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 })
                 ;
-        }
-
-        public static void AddBackgroundService(this IServiceCollection services)
-        {
-            services.AddHangfire(config => config
-                .UseIgnoredAssemblyVersionTypeResolver()
-                .UseInMemoryStorage(new InMemoryStorageOptions
-                {
-                    MaxExpirationTime = TimeSpan.FromHours(6)
-                }));
-
-            services.AddHangfireServer(options => options.Queues = new[] { "critical", "default" });
-        }
-
-        //Configure CORS to allow any origin, header and method. 
-        //Change the CORS policy based on your requirements.
-        //More info see: https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.0
+        }         
 
         public static void AddCustomCors(this IServiceCollection services, IContainer container)
         {
@@ -146,49 +113,9 @@ namespace Host.Extensions
             return services;
         }
 
-        public static IServiceCollection Notifications(this IServiceCollection services, IEndpointRouteBuilder endpoints)
-        {
-            services.AddSignalR();
-            return services;
-        }
+        public static IServiceCollection AddExceptionMiddleware(this IServiceCollection services) => services.AddScoped<ErrorHandlerMiddleware>();
 
-        public static IEndpointRouteBuilder UseNotifications(this IEndpointRouteBuilder endpoints)
-        {
-            endpoints.MapHub<NotificationHub>("/notifications", options =>
-            {
-                options.CloseOnAuthenticationExpiration = true;
-            });
-            return endpoints;
-        }
-
-        internal static IServiceCollection AddExceptionMiddleware(this IServiceCollection services) => services.AddScoped<ErrorHandlerMiddleware>();
-
-        internal static IApplicationBuilder UseExceptionMiddleware(this IApplicationBuilder app) => app.UseMiddleware<ErrorHandlerMiddleware>();
-
-        public static IServiceCollection AddRequestLogging(this IServiceCollection services, IConfiguration config)
-        {
-            if (GetMiddlewareSettings(config).EnableHttpsLogging)
-            {
-                services.AddSingleton<RequestLoggingMiddleware>();
-                services.AddScoped<ResponseLoggingMiddleware>();
-            }
-
-            return services;
-        }
-
-        public static IApplicationBuilder UseRequestLogging(this IApplicationBuilder app, IConfiguration config)
-        {
-            if (GetMiddlewareSettings(config).EnableHttpsLogging)
-            {
-                app.UseMiddleware<RequestLoggingMiddleware>();
-                app.UseMiddleware<ResponseLoggingMiddleware>();
-            }
-
-            return app;
-        }
-
-        private static MiddlewareSettings GetMiddlewareSettings(IConfiguration config) =>
-       config.GetSection(nameof(MiddlewareSettings)).Get<MiddlewareSettings>()!;
+        public static IApplicationBuilder UseExceptionMiddleware(this IApplicationBuilder app) => app.UseMiddleware<ErrorHandlerMiddleware>();
 
         private static IEndpointConventionBuilder MapHealthCheck(this IEndpointRouteBuilder endpoints) =>
         endpoints.MapHealthChecks("/api/health");
