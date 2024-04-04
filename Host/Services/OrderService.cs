@@ -1,15 +1,16 @@
 ﻿using Hangfire;
+using Host.Common.Interfaces;
 using Host.Infrastructure.Caching;
 using Host.Infrastructure.HttpClients;
 using Host.Interfaces;
 using Host.Models;
-using Host.Options;
 using Host.Requests;
 using Microsoft.Extensions.Options;
+using StackExchange.Redis;
 
 namespace Host.Services
 {
-    public class OrderService : IOrderService
+    public class OrderService : IOrderService, ITransientService
     {
         private readonly IBackgroundJobClient _job;
         private readonly IntegrationClient _integration;

@@ -1,4 +1,4 @@
-﻿namespace Host.Options
+﻿namespace Host.Infrastructure.HttpClients
 {
 #nullable disable
     public class RequestInfo

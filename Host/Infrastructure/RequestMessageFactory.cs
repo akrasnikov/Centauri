@@ -1,4 +1,4 @@
-﻿using Host.Options;
+﻿using Host.Infrastructure.HttpClients;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;

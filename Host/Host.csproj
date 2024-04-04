@@ -10,12 +10,16 @@
 
   <ItemGroup>
     <Compile Remove="Containers\**" />
+    <Compile Remove="LogFiles\**" />
     <Compile Remove="Responses\**" />
     <Content Remove="Containers\**" />
+    <Content Remove="LogFiles\**" />
     <Content Remove="Responses\**" />
     <EmbeddedResource Remove="Containers\**" />
+    <EmbeddedResource Remove="LogFiles\**" />
     <EmbeddedResource Remove="Responses\**" />
     <None Remove="Containers\**" />
+    <None Remove="LogFiles\**" />
     <None Remove="Responses\**" />
   </ItemGroup>
 
@@ -32,6 +36,8 @@
 	  <PackageReference Include="Autofac.Extras.DynamicProxy" Version="7.1.0" />
 
 	  <PackageReference Include="Figgle" Version="0.5.1" />
+
+	  <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.3" />
 
 	  <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.3.0" />
 
@@ -65,7 +71,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="LogFiles\Application\" />
   </ItemGroup>
 
   <ItemGroup>

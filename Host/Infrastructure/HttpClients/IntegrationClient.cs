@@ -4,7 +4,6 @@ using Host.Infrastructure.Caching;
 using Host.Infrastructure.Notifications;
 using Host.Metrics;
 using Host.Models;
-using Host.Options;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;

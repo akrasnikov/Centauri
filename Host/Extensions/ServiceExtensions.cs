@@ -4,8 +4,6 @@ using Hangfire.InMemory;
 using Host.Infrastructure.HttpClients;
 using Host.Infrastructure.Notifications;
 using Host.Middleware;
-using Host.Options;
-using Host.Services;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using System.Reflection;
