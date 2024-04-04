@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Host.Infrastructure.Notifications.Messages;
+using Microsoft.AspNetCore.SignalR;
 using static Host.Infrastructure.Notifications.NotificationConstants;
 
 namespace Host.Infrastructure.Notifications;

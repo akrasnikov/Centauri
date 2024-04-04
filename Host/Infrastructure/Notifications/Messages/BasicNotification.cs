@@ -1,4 +1,4 @@
-﻿namespace Host.Infrastructure.Notifications;
+﻿namespace Host.Infrastructure.Notifications.Messages;
 
 public class BasicNotification : INotificationMessage
 {

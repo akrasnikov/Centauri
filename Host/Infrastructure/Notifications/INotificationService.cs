@@ -1,4 +1,5 @@
 ﻿using Host.Common.Interfaces;
+using Host.Infrastructure.Notifications.Messages;
 
 namespace Host.Infrastructure.Notifications
 {
