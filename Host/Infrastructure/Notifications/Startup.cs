@@ -1,3 +1,4 @@
+using Host.Exceptions;
 using Serilog;
 using ILogger = Serilog.ILogger;
 
@@ -9,7 +10,7 @@ namespace Host.Infrastructure.Notifications
         {
             ILogger logger = Log.ForContext(typeof(Startup));
 
-            var signalRSettings = config.GetSection(nameof(SignalRSettings)).Get<SignalRSettings>() ?? throw new Exception("SignalR is not configured."); ;
+            var signalRSettings = config.GetSection(nameof(SignalRSettings)).Get<SignalRSettings>() ?? throw new ExtensionException("SignalR is not configured."); ;
 
             if (!signalRSettings.UseBackplane)
             {
