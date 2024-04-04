@@ -37,6 +37,8 @@
 
 	  <PackageReference Include="Figgle" Version="0.5.1" />
 
+	  <PackageReference Include="Hangfire.Console.Extensions" Version="2.0.0" />
+
 	  <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.3" />
 
 	  <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.3.0" />
@@ -71,6 +73,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Logs\" />
   </ItemGroup>
 
   <ItemGroup>
