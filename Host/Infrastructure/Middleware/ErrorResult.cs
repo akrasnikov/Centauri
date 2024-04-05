@@ -1,4 +1,4 @@
-﻿namespace Host.Middleware;
+﻿namespace Host.Infrastructure.Middleware;
 
 public class ErrorResult
 {

@@ -1,6 +1,4 @@
-﻿using OpenIDConnect.Application.Common.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using Host.Common.Interfaces;
+﻿using Host.Common.Interfaces;
 
 namespace Host.Services;
 
@@ -13,6 +11,9 @@ internal static class Startup
 
     internal static IServiceCollection AddServices(this IServiceCollection services, Type interfaceType, ServiceLifetime lifetime)
     {
+        //services.AddTransient<IOrderService, OrderService>();
+        //services.AddSingleton<MetricsInstrumentation>();
+
         var interfaceTypes =
             AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())

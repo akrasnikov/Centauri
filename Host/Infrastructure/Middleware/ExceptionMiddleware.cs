@@ -2,22 +2,15 @@
 using System.Net;
 using System.Text.Json;
 
-namespace Host.Middleware
+namespace Host.Infrastructure.Middleware
 {
-    public class ErrorHandlerMiddleware
+    public class ExceptionMiddleware : IMiddleware
     {
-        private readonly RequestDelegate _next;
-
-        public ErrorHandlerMiddleware(RequestDelegate next)
-        {
-            _next = next ?? throw new ArgumentNullException(nameof(next));
-        }
-
-        public async Task Invoke(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             try
             {
-                await _next(context);
+                await next(context);
             }
             catch (Exception error)
             {
@@ -43,8 +36,8 @@ namespace Host.Middleware
                         break;
 
                     case BadHttpRequestException:
-                        response.StatusCode= (int)HttpStatusCode.BadRequest;
-                        break ;
+                        response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        break;
                     default:
                         // unhandled error
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;
