@@ -6,5 +6,5 @@ public interface ICacheService
     Task<T?> GetAsync<T>(string key, CancellationToken token = default);
 
     Task RefreshAsync(string key, CancellationToken token = default);
-    Task SetAsync<T>(string key, T value, TimeSpan? slidingExpiration = null, CancellationToken cancellationToken = default);
+    Task SetAsync<T>(string key, T value, TimeSpan? expiration = null, CancellationToken cancellationToken = default);
 }
