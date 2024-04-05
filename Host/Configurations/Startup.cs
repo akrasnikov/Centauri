@@ -19,7 +19,9 @@ internal static class Startup
                 .AddJsonFile($"{configurationsDirectory}/openapi.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"{configurationsDirectory}/openapi.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"{configurationsDirectory}/signalr.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"{configurationsDirectory}/signalr.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)             
+                .AddJsonFile($"{configurationsDirectory}/signalr.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                 .AddJsonFile($"{configurationsDirectory}/requests.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"{configurationsDirectory}/requests.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
         return builder;
     }

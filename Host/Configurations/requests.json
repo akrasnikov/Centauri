@@ -1,0 +1,41 @@
+{
+  "CustomSettings": {
+    "Angular": "http://localhost:4200"
+  },
+  "Requests": [
+    {
+      "Url": "http://www.google.com",
+      "Method": "GET",
+      "QueryParams": {
+        "page": "1",
+        "size": "10"
+      }
+    },
+    {
+      "Url": "http://www.google.com",
+      "Method": "GET",
+      "QueryParams": {
+        "query": ""
+      }
+    }
+  ],
+  "IntegrationOptions": {
+    "Requests": [
+      {
+        "Url": "http://www.google.com",
+        "Method": "GET",
+        "QueryParams": {
+          "page": "1",
+          "size": "10"
+        }
+      },
+      {
+        "Url": "http://www.google.com",
+        "Method": "GET",
+        "QueryParams": {
+          "query": ""
+        }
+      }
+    ]
+  }
+}
