@@ -1,15 +1,19 @@
 using Host.Configurations;
 using Host.Extensions;
+using Host.Infrastructure.BackgroundJobs;
+using Host.Infrastructure.Caching;
+using Host.Infrastructure.HttpClients;
 using Host.Infrastructure.Logging;
+using Host.Infrastructure.Middleware;
+using Host.Infrastructure.Notifications;
+using Host.Services;
 using OpenTelemetry.Metrics;
 using PostSharp.Patterns.Diagnostics;
 using PostSharp.Patterns.Diagnostics.Backends.Serilog;
 using Serilog;
 
-[assembly: Log]
 namespace Host
 {
-
     public class Program
     {
         public static void Main(string[] args)
@@ -18,10 +22,14 @@ namespace Host
             {
                 var builder = WebApplication.CreateBuilder(args);
                 builder.AddConfigurations().RegisterSerilog();
+                builder.Services.AddServices();
                 //LoggingServices.DefaultBackend = new SerilogLoggingBackend(Log.Logger);
                 builder.Services.AddControllers();
-                builder.Services.AddServices();
-                builder.Services.AddBackgroundService();
+                builder.Services.AddCaching(builder.Configuration);
+                builder.Services.AddNotifications(builder.Configuration);
+                builder.Services.AddExceptionMiddleware();
+            
+                builder.Services.AddBackgroundServices(builder.Configuration);
                 builder.Services.AddIntegration(builder.Configuration);
                 builder.Services.AddInstrumentation(builder.Configuration);
 
@@ -40,9 +48,9 @@ namespace Host
                 }
                 //app.UseSerilogRequestLogging();
 
-                //app.UseHangfireDashboard(String.Empty);
+                app.UseHangfireDashboard(builder.Configuration);
 
-                app.UseErrorHandlingMiddleware();
+                app.UseExceptionMiddleware();
 
                 app.UseHttpsRedirection();
 

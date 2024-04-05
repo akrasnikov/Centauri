@@ -13,7 +13,7 @@ internal static class Startup
 {
     private static readonly  ILogger _logger = Log.ForContext(typeof(Startup));
 
-    internal static IServiceCollection AddBackgroundJobs(this IServiceCollection services, IConfiguration config)
+    internal static IServiceCollection AddBackgroundServices(this IServiceCollection services, IConfiguration config)
     {
         services.AddHangfireServer(options => config.GetSection("HangfireSettings:Server").Bind(options));
         services.AddHangfireConsoleExtensions();

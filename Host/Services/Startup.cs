@@ -1,18 +1,25 @@
 ﻿using Host.Common.Interfaces;
+using Host.Common.Services;
+using Host.Infrastructure.Metrics;
+using Host.Interfaces;
 
 namespace Host.Services;
 
 internal static class Startup
 {
-    internal static IServiceCollection AddServices(this IServiceCollection services) =>
-        services
-            .AddServices(typeof(ITransientService), ServiceLifetime.Transient)
-            .AddServices(typeof(IScopedService), ServiceLifetime.Scoped);
-
-    internal static IServiceCollection AddServices(this IServiceCollection services, Type interfaceType, ServiceLifetime lifetime)
+    internal static IServiceCollection AddServices(this IServiceCollection services)
     {
         //services.AddTransient<IOrderService, OrderService>();
-        //services.AddSingleton<MetricsInstrumentation>();
+        //services.AddTransient<ISerializerService, MicrosoftSerializerService>();
+       services.AddSingleton<OrderInstrumentation>();
+
+        services.AddServices(typeof(ITransientService), ServiceLifetime.Transient);
+        services.AddServices(typeof(IScopedService), ServiceLifetime.Scoped);
+        return services;
+    }
+
+    internal static IServiceCollection AddServices(this IServiceCollection services, Type interfaceType, ServiceLifetime lifetime)
+    {       
 
         var interfaceTypes =
             AppDomain.CurrentDomain.GetAssemblies()

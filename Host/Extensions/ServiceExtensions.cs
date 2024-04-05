@@ -33,19 +33,8 @@ namespace Host.Extensions
                            .AllowAnyMethod();
                 });
             });
-        }
-
-
-        public static IServiceCollection AddIntegration(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<IntegrationOptions>(configuration);
-            services.AddHttpClient<IntegrationClient>()
-                  .AddStandardResilienceHandler(options =>
-                    {
-                        // Configure standard resilience options here
-                    }); ;
-            return services;
-        }
+        } 
+         
         public static IServiceCollection AddInstrumentation(this IServiceCollection services, IConfiguration configuration)
         {
             services
