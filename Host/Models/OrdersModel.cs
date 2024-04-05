@@ -1,6 +1,6 @@
-﻿using Host.Infrastructure.Notifications;
+﻿using Host.Infrastructure.Metrics;
+using Host.Infrastructure.Notifications;
 using Host.Infrastructure.Notifications.Messages;
-using Host.Metrics;
 
 namespace Host.Models
 {

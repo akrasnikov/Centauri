@@ -18,7 +18,7 @@ namespace Host.Infrastructure
         {
             using var request = new HttpRequestMessage();
 
-            var uriBuilder = new UriBuilder(options.Value.Url);
+            var uriBuilder = new UriBuilder("");
 
             if (queryParams != null)
             {
@@ -50,7 +50,7 @@ namespace Host.Infrastructure
         {
             using var request = new HttpRequestMessage();
 
-            var uriBuilder = new UriBuilder(options.Value.Url);
+            var uriBuilder = new UriBuilder("options.Value.Url");
 
             if (queryParams != null)
             {

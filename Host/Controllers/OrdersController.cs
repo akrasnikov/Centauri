@@ -1,5 +1,7 @@
 ﻿using Host.Extensions;
+using Host.Interfaces;
 using Host.Models;
+using Host.Requests;
 using Host.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,21 +10,24 @@ namespace Host.Controllers
 
     public class OrdersController : Controller
     {
-        private readonly IDummyService _dummyService;
-        public OrdersController(IDummyService dummyService)
+        private readonly IOrderService _orderService;
+
+        public OrdersController(IOrderService orderService)
         {
-            _dummyService = dummyService;
+            _orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
         }
 
-        //[ProducesResponseType(typeof(Response<Order>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[HttpPost("orders/order")]
-        //public async Task<IActionResult> CreateAsync([FromBody] OrderRequest request)
-        //{
-        //    var response = await _orderService.CreateAsync(request, HttpContext.RequestAborted);
-        //    return Ok(response);            
-        //}
+
+
+        [ProducesResponseType(typeof(Response<OrdersModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPost("orders/order")]
+        public async Task<IActionResult> CreateAsync([FromBody] OrderRequest request)
+        {
+            var response = await _orderService.CreateAsync(request, HttpContext.RequestAborted);
+            return Ok(response);
+        }
 
 
         // TODO добавить pagging
@@ -32,8 +37,8 @@ namespace Host.Controllers
         [HttpGet("orders/{id}")]
         public async Task<IActionResult> GetAsync([FromQuery] string id)
         {
-           var response = _dummyService.Message("hello");
-            return Ok();
+           var response = await  _orderService.GetAsync(id, HttpContext.RequestAborted);
+            return Ok(response);
         }
     }
 }

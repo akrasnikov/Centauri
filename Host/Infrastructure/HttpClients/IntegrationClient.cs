@@ -1,11 +1,9 @@
-﻿using Host.Exceptions;
-using Host.Extensions;
+﻿using Host.Extensions;
 using Host.Infrastructure.Caching;
+using Host.Infrastructure.Metrics;
 using Host.Infrastructure.Notifications;
-using Host.Metrics;
 using Host.Models;
 using Microsoft.Extensions.Options;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
 namespace Host.Infrastructure.HttpClients

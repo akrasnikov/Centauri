@@ -1,17 +1,17 @@
 ﻿using System.Diagnostics.Metrics;
 
-namespace Host.Metrics
+namespace Host.Infrastructure.Metrics
 {
     public class OrderInstrumentation
-    {       
+    {
         private Counter<int> OrdersCounter { get; }
 
         private Counter<int> ExceptionCounter { get; }
 
         private Counter<int> TotalOrdersCounter { get; }
-       
+
         private Histogram<double> OrdersPriceHistogram { get; }
-      
+
 
         public OrderInstrumentation(IMeterFactory meterFactory, IConfiguration configuration)
         {
@@ -20,7 +20,7 @@ namespace Host.Metrics
             OrdersCounter = meter.CreateCounter<int>("orders-counter", "order");
             TotalOrdersCounter = meter.CreateCounter<int>("total-orders", "orders");
             ExceptionCounter = meter.CreateCounter<int>("orders-exception", "order");
-            OrdersPriceHistogram = meter.CreateHistogram<double>("orders-price", "euros", "delta price orders");  
+            OrdersPriceHistogram = meter.CreateHistogram<double>("orders-price", "euros", "delta price orders");
 
         }
 
