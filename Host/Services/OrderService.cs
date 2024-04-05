@@ -2,6 +2,7 @@
 using Host.Common.Interfaces;
 using Host.Infrastructure.Caching;
 using Host.Infrastructure.HttpClients;
+using Host.Infrastructure.Logging.PostSharp;
 using Host.Interfaces;
 using Host.Models;
 using Host.Requests;
@@ -10,7 +11,8 @@ using StackExchange.Redis;
 
 namespace Host.Services
 {
-    public class OrderService : IOrderService, ITransientService
+    [CustomLoggingFormatter]
+    public class OrderService : IOrderService
     {
         private readonly IBackgroundJobClient _job;
         private readonly IntegrationClient _integration;
