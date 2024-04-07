@@ -11,15 +11,19 @@
   <ItemGroup>
     <Compile Remove="Containers\**" />
     <Compile Remove="LogFiles\**" />
+    <Compile Remove="Logs\**" />
     <Compile Remove="Responses\**" />
     <Content Remove="Containers\**" />
     <Content Remove="LogFiles\**" />
+    <Content Remove="Logs\**" />
     <Content Remove="Responses\**" />
     <EmbeddedResource Remove="Containers\**" />
     <EmbeddedResource Remove="LogFiles\**" />
+    <EmbeddedResource Remove="Logs\**" />
     <EmbeddedResource Remove="Responses\**" />
     <None Remove="Containers\**" />
     <None Remove="LogFiles\**" />
+    <None Remove="Logs\**" />
     <None Remove="Responses\**" />
   </ItemGroup>
 
@@ -75,7 +79,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Logs\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -34,10 +34,15 @@ namespace Host.Controllers
         [ProducesResponseType(typeof(OrdersModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet("orders/{id}")]
+        [HttpGet("orders")]
         public async Task<IActionResult> GetAsync([FromQuery] string id)
         {
-           var response = await  _orderService.GetAsync(id, HttpContext.RequestAborted);
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new ArgumentException($"\"{nameof(id)}\" не может быть пустым или содержать только пробел.", nameof(id));
+            }
+
+            var response = await  _orderService.GetAsync(id, HttpContext.RequestAborted);
             return Ok(response);
         }
     }
