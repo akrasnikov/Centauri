@@ -9,10 +9,11 @@ services:
     build:
       context: .
       dockerfile: Host/Dockerfile
-    networks:
-      - centauri-network
+    # networks:
+    #   - centauri-network
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8010
       - TZ=Asia/Karachi
     restart: on-failure
     depends_on:
@@ -28,10 +29,11 @@ services:
     build:
       context: .
       dockerfile: MockIntegration.Apis/Dockerfile
-    networks:
-      - centauri-network
+    # networks:
+    #   - centauri-network
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8020
       - TZ=Asia/Karachi
     restart: on-failure
     depends_on:
@@ -45,8 +47,8 @@ services:
     container_name: orders-prometheus
     ports:
       - "30090:9090"
-    networks:
-      - centauri-network
+    # networks:
+    #   - centauri-network
     environment:
       - TZ=UTC
     volumes:
@@ -55,8 +57,8 @@ services:
   grafana:
     image: grafana/grafana
     container_name: orders-grafana
-    networks:
-      - centauri-network
+    # networks:
+    #   - centauri-network
     ports:
       - "30091:3000"
     volumes:
@@ -65,10 +67,10 @@ services:
   redis:
     container_name: redis
     image: bitnami/redis:5.0.9     
-    networks:
-      - centauri-network   
-     
+    # networks:
+    #   - centauri-network        
     environment:       
+      - ALLOW_EMPTY_PASSWORD=yes
       - REDIS_PORT=6379
       - REDIS_DATABASES=16
     ports:
@@ -130,6 +132,6 @@ volumes:
       device: /var/centauri
       o: bind 
 
-networks:
-  centauri-network:
-    name:  centauri_network
+# networks:
+#   centauri-network:
+#     name:  centauri_network

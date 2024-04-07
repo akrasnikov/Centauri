@@ -3,22 +3,23 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 8080
+#EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["MockIntegration.Apis/MockIntegration.Apis.csproj", "MockIntegration.Apis/"]
-RUN dotnet restore "./MockIntegration.Apis/MockIntegration.Apis.csproj"
+COPY ["MockIntegration.Apis/Host.Integration.csproj", "MockIntegration.Apis/"]
+RUN dotnet restore "./MockIntegration.Apis/Host.Integration.csproj"
 COPY . .
 WORKDIR "/src/MockIntegration.Apis"
-RUN dotnet build "./MockIntegration.Apis.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Host.Integration.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./MockIntegration.Apis.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Host.Integration.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "MockIntegration.Apis.dll"]
+ENTRYPOINT ["dotnet", "Host.Integration.dll"]
+
