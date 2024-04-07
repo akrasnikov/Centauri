@@ -17,7 +17,7 @@ namespace Host.Infrastructure.HttpClients
         private readonly List<RequestInfo> _requests;
         private readonly ILogger<IntegrationClient> _logger;
 
-        private const double expiration = 1 /*minute*/;
+        private const double expiration = 10 /*minute*/;
 
         public IntegrationClient(
             HttpClient client,
@@ -69,9 +69,9 @@ namespace Host.Infrastructure.HttpClients
                 {
                     var body = await response.Content.ReadAsStringAsync(cancellationToken) ?? throw new InvalidOperationException("reason content");
 
-                    var order = JsonSerializer.Deserialize<OrderModel>(body) ?? throw new InvalidOperationException("reason deserialize");
+                    var order = JsonSerializer.Deserialize<IReadOnlyList<Order>>(body) ?? throw new InvalidOperationException("reason deserialize");
 
-                    await model.AddAsync(order, _instrumentation, _notificationService, cancellationToken);        
+                    await model.AddAsync(order, _instrumentation, _notificationService, cancellationToken);
 
                     await _cacheService.SetAsync(model.Id, model, TimeSpan.FromMinutes(expiration), cancellationToken);
 

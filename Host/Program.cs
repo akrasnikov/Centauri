@@ -8,8 +8,6 @@ using Host.Infrastructure.Middleware;
 using Host.Infrastructure.Notifications;
 using Host.Services;
 using OpenTelemetry.Metrics;
-using PostSharp.Patterns.Diagnostics;
-using PostSharp.Patterns.Diagnostics.Backends.Serilog;
 using Serilog;
 
 namespace Host
@@ -22,6 +20,7 @@ namespace Host
             {
                 var builder = WebApplication.CreateBuilder(args);
                 builder.AddConfigurations().RegisterSerilog();
+                builder.Services.AddControllers();
                 builder.Services.AddServices();
                 //LoggingServices.DefaultBackend = new SerilogLoggingBackend(Log.Logger);
                 builder.Services.AddControllers();

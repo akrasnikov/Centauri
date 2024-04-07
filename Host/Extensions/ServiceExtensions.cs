@@ -15,6 +15,8 @@ namespace Host.Extensions
                 {
                     options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
+                    options.JsonSerializerOptions.WriteIndented = true;
                 })
                 ;
         }

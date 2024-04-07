@@ -24,7 +24,7 @@ namespace Host.Infrastructure.Metrics
 
         }
 
-        public void AddOrder() => OrdersCounter.Add(1);
+        public void AddOrder(int count) => OrdersCounter.Add(count);
         public void AddTotalOrder() => TotalOrdersCounter.Add(1);
 
         public void AddException() => ExceptionCounter.Add(1);
