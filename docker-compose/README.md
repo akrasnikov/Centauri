@@ -1,28 +1,3 @@
-# Working with Docker-Compose
-
-There are some prerequisites for using the included docker-compose.yml files:
-
-1) Make sure you have docker installed (on windows install docker desktop)
-
-2) Create and install an https certificate:
-
-    ```
-    dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\cert.pfx -p password!
-    ```
-
-3) It's possible that the above step gives you an `A valid HTTPS certificate is already present` error.
-   In that case you will have to run the following command, and then  `Re-Run Step 2`
-
-    ```
-     dotnet dev-certs https --clean
-    ```
-
-4) Trust the certificate
-
-    ```
-     dotnet dev-certs https --trust
-    ```
-
 
 ## Docker-Compose Commands
 
@@ -31,23 +6,45 @@ There are some prerequisites for using the included docker-compose.yml files:
 
 1) WebAPI + PostgreSQL (default)
 ```
-docker-compose -f docker-compose.postgresql.yml up -d
-docker-compose -f docker-compose.postgresql.yml down
+docker-compose up  -d --build
+
 ```
 
 
-Your API should be available at `https://localhost:5100/swagger` and `http://localhost:5010/swagger`
+Your API should be available at
+- `https://localhost:8010/swagger/index.html` - order-webapi
+- `http://localhost:8020/swagger/index.html` - moq-webapi
 
-## Specifications
+on server
+- http://104.131.189.170/swagger/index.html - order-webapi
+- http://104.131.189.170:8020/swagger/index.html - moq-webap
 
-Let's first examine the Environment Variables passed into the dotnet-webapi container.
+- http://104.131.189.170:30091/  - grafana  user & password = grafana
+- http://104.131.189.170:30090/ - prometheus
 
-- ASPNETCORE_ENVIRONMENT : Custom Environment Name.
-- ASPNETCORE_URLS : Enter in the Port list.
-- ASPNETCORE_HTTPS_PORT : Custom SSL Port.
-- DatabaseSettings__ConnectionString : Valid Connection String.
-- HangfireSettings__Storage__ConnectionString : Valid Connection String.
-- DatabaseSettings__DBProvider : This will the database engine.
-- HangfireSettings__Storage__StorageProvider : This will the database engine.
+## Roadmap
+ 
 
-Each of the docker-compose will have the same exact variables with values suited to the context.
+1. deploy to server
+1.1 create docker-compose -ok
+1.2 deploy prometeus & grafana - ok
+1.3 deploy elasticsearch for logging
+1.4 configure nginx - ok
+
+2. create moq-webapi - ok
+3. retry with polly for agregator-webapi - ok
+4. configure dashboard for grafana & metrics - ok
+5. configure tracing  
+6. testing
+7. fixbug
+8. configure rate-limit for moq-webapi
+9. create integration test  using console application 
+
+logic 
+1. create order -> webapi post: orders/order - ok
+2. run multiple tasks with batch using Hangfire in a background job - ok
+3. save progress in a distributed cache using Redis while running multiple tasks - ok 
+4. send metrics to prometeus - ok 
+5. send traceId
+6. progress tracking using a Web API endpoint 'GET order/{id}' - ok 
+7. progress tracking using SignalR - need test 
