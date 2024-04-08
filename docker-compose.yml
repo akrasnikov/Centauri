@@ -62,7 +62,7 @@ services:
     ports:
       - "30091:3000"
     volumes:
-      - grafana_storage:/var/lib/grafana
+      - grafana-data:/var/lib/grafana
       
   redis:
     container_name: redis
@@ -126,12 +126,13 @@ services:
   #   restart: on-failure
 
 volumes:
-  # centauri-volume:
-  #   driver_opts:
-  #     type: none
-  #     device: /var/centauri
-  #     o: bind 
-  grafana-storage: {}
+  centauri-volume:
+    driver_opts:
+      type: none
+      device: /var/centauri
+      o: bind 
+  grafana-data:
+    external: true
 
 # networks:
 #   centauri-network:
