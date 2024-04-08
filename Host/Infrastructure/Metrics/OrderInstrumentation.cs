@@ -11,11 +11,11 @@ namespace Host.Infrastructure.Metrics
         private Counter<int> TotalOrdersCounter { get; }
 
         private Histogram<double> OrdersPriceHistogram { get; }
-
-
+        
+        public const string MeterName = "orders.metrics";
         public OrderInstrumentation(IMeterFactory meterFactory, IConfiguration configuration)
         {
-            var meter = meterFactory.Create("orders.meter");
+            var meter = meterFactory.Create(MeterName);
 
             OrdersCounter = meter.CreateCounter<int>("orders-counter", "order");
             TotalOrdersCounter = meter.CreateCounter<int>("total-orders", "orders");

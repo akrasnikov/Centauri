@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Host.Infrastructure.HttpClients;
+using Host.Infrastructure.Metrics;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using System.Text.Json;
@@ -42,8 +43,8 @@ namespace Host.Extensions
             services
                 .AddOpenTelemetry()
                 .WithMetrics(metrics => metrics
-                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("orders.webapi"))
-                    .AddMeter("orders.meter")
+                    //.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("orders.webapi"))
+                    .AddMeter(OrderInstrumentation.MeterName)
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation()
