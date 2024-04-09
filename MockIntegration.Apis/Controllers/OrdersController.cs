@@ -1,14 +1,22 @@
-﻿using Bogus.DataSets;
-using Bogus;
+﻿using Bogus;
 using Host.Integration.Models;
+using Host.Integration.Services;
 using Host.Integration.Wrappers;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using OpenTelemetry.Trace;
+using System.Diagnostics;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Host.Integration.Controllers
 {
     public class OrdersController : Controller
     {
+        private  readonly IDummyClass _dummyClass;
+
+        public OrdersController(IDummyClass dummyClass)
+        {
+            _dummyClass = dummyClass ?? throw new ArgumentNullException(nameof(dummyClass));
+        }
 
         [ProducesResponseType(typeof(IReadOnlyCollection<OrderModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response<OrderModel>), StatusCodes.Status400BadRequest)]
@@ -16,6 +24,13 @@ namespace Host.Integration.Controllers
         [HttpGet("orders/")]
         public async Task<IActionResult> GetAsync([FromQuery] string from, [FromQuery] string to, [FromQuery] DateTime time)
         {
+            using var activitySource = ActivityProvider.Create();
+            using var activity = activitySource.StartActivity($"{ActivityProvider.MethodName}: get orders ");
+            activity?.SetTag(ActivityProvider.MethodArgument, $"from:{from} - to: {to} - time: {time}");
+
+            var dummy = _dummyClass.GetDummy("hello");
+            var activityId = Activity.Current.Id;
+            var id = HttpContext.TraceIdentifier;
             var orderGenerator = GetOrderGenerator(from, to, time);
             var NumberOfOrders = 2;
             var generatedOrders = orderGenerator.Generate(NumberOfOrders);
