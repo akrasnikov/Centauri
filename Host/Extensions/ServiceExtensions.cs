@@ -1,8 +1,10 @@
 ﻿using Autofac;
 using Host.Infrastructure.HttpClients;
 using Host.Infrastructure.Metrics;
+using Host.Infrastructure.Tracing;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using System.Text.Json;
 
 namespace Host.Extensions
@@ -36,12 +38,18 @@ namespace Host.Extensions
                            .AllowAnyMethod();
                 });
             });
-        } 
-         
+        }
+
         public static IServiceCollection AddInstrumentation(this IServiceCollection services, IConfiguration configuration)
         {
             services
                 .AddOpenTelemetry()
+                    .WithTracing(builder => builder
+                    .AddSource(ActivityProvider.ActivityName)
+                    .AddAspNetCoreInstrumentation(options => options.RecordException = true)
+                    .AddHttpClientInstrumentation()
+                    .AddConsoleExporter()
+                    .AddOtlpExporter())
                 .WithMetrics(metrics => metrics
                     //.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("orders.webapi"))
                     .AddMeter(OrderInstrumentation.MeterName)

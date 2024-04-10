@@ -3,11 +3,13 @@ using Host.Common.Interfaces;
 using Host.Infrastructure.Caching;
 using Host.Infrastructure.HttpClients;
 using Host.Infrastructure.Logging.PostSharp;
+using Host.Infrastructure.Tracing;
 using Host.Interfaces;
 using Host.Models;
 using Host.Requests;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Host.Services
 {
@@ -43,7 +45,11 @@ namespace Host.Services
 
         public async Task<OrdersModel> GetAsync(string id, CancellationToken cancellationToken = default)
         {
-          return await _cacheService.GetAsync<OrdersModel>(id, cancellationToken) ?? throw new BadHttpRequestException("no key exists");           
+            _logger.LogInformation("start get order by id");
+            using var activitySource = ActivityProvider.Create();
+            using var activity = activitySource.StartActivity($"{ActivityProvider.MethodName}: {nameof(GetAsync).ToLowerInvariant()}");
+            activity?.SetTag(ActivityProvider.MethodArgument, $"id: {id}");
+            return await _cacheService.GetAsync<OrdersModel>(id, cancellationToken) ?? throw new BadHttpRequestException("no key exists");           
         } 
          
     }

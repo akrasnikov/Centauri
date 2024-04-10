@@ -21,8 +21,8 @@ namespace Host.Integration
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
-                builder.Services.AddSerilog();
-
+                //builder.Services.AddSerilog();
+                builder.Host.UseSerilog(SeriLogger.Configure);
                 // Add services to the container.
                 builder.Services.AddTransient<IDummyClass, DummyClass>();
                 builder.Services.AddControllers();
@@ -47,6 +47,7 @@ namespace Host.Integration
 
                 //builder.Services.AddOpenTelemetryTracing(builder.Configuration);
 
+                
 
                 var app = builder.Build();
                 app.UseSerilogRequestLogging(options =>
