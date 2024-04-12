@@ -73,7 +73,7 @@ namespace Host.Infrastructure.HttpClients
 
                     await model.AddAsync(order, _instrumentation, _notificationService, cancellationToken);
 
-                    await _cacheService.SetAsync(model.Id, model, TimeSpan.FromMinutes(expiration), cancellationToken);
+                    await _cacheService.SetAsync(model.Id, model, cancellationToken);
 
                     _logger.LogInformation("response received: " + body);
 

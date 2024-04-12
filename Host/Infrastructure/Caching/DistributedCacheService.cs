@@ -1,19 +1,23 @@
 using Host.Common.Interfaces;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
 using System.Text;
 
 namespace Host.Infrastructure.Caching;
 
 #pragma warning disable CA2254
-public class DistributedCacheService : ICacheService, ITransientService
+public class DistributedCacheService : ICacheService 
 {
     private readonly IDistributedCache _cache;
+    private readonly TimeSpan _expiration;
     private readonly ILogger<DistributedCacheService> _logger;
     private readonly ISerializerService _serializer;
 
-    public DistributedCacheService(IDistributedCache cache, ILogger<DistributedCacheService> logger, ISerializerService serializer)
+    public DistributedCacheService(IDistributedCache cache,
+        IOptions<CacheSettings> options, ILogger<DistributedCacheService> logger, ISerializerService serializer)
     {
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+        _expiration = TimeSpan.FromMinutes(10);
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
     } 
@@ -66,11 +70,11 @@ public class DistributedCacheService : ICacheService, ITransientService
     }
 
 
-    public Task SetAsync<T>(string key, T value, TimeSpan? expiration = null, CancellationToken cancellationToken = default)
+    public Task SetAsync<T>(string key, T value, CancellationToken cancellationToken = default)
     {
         try
         {
-            return SetAsync(key, Serialize(value), expiration, cancellationToken);
+            return SetAsync(key, Serialize(value), _expiration, cancellationToken);
         }
         catch (Exception)
         {
@@ -84,7 +88,7 @@ public class DistributedCacheService : ICacheService, ITransientService
     {
         try
         {
-            await _cache.SetAsync(key, value, GetOptions(expiration), token);
+            await _cache.SetAsync(key, value, GetOptions(_expiration), token);
             _logger.LogDebug($"Added to Cache : {key}");
         }
         catch(Exception ex)
