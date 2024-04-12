@@ -1,11 +1,24 @@
-{   
+{
   "Requests": [
     {
       "Url": "http://localhost:8020/orders",
       "Method": "GET",
       "QueryParams": {
-        "page": "1",
-        "size": "10"
+        "query": ""
+      }
+    },
+    {
+      "Url": "http://localhost:8030/orders",
+      "Method": "GET",
+      "QueryParams": {
+        "query": ""
+      }
+    },
+    {
+      "Url": "http://localhost:8040/orders",
+      "Method": "GET",
+      "QueryParams": {
+        "query": ""
       }
     },
     {
@@ -17,5 +30,3 @@
     }
   ]
 }
-
- 

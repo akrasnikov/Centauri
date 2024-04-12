@@ -21,8 +21,8 @@ services:
       - redis             
       
   
-  host-integration:
-    container_name: host-integration
+  host-integration-v1:
+    container_name: host-integration-v1
     # image: akrasnikov/host.integration:1.0
     ports:
       - "8020:8020"
@@ -37,9 +37,52 @@ services:
       - TZ=Asia/Karachi
     restart: on-failure
     depends_on:
+      - jaeger
+      - elasticsearch
       - prometheus
       - redis
       
+  host-integration-v2:
+    container_name: host-integration-v2
+    # image: akrasnikov/host.integration:1.0
+    ports:
+      - "8030:8020"
+    build:
+      context: .
+      dockerfile: MockIntegration.Apis/Dockerfile
+    # networks:
+    #   - centauri-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_HTTP_PORTS=8020
+      - TZ=Asia/Karachi
+    restart: on-failure
+    depends_on:
+      - jaeger
+      - elasticsearch
+      - prometheus
+      - redis
+      
+  host-integration-v3:
+    container_name: host-integration-v3
+    # image: akrasnikov/host.integration:1.0
+    ports:
+      - "8040:8020"
+    build:
+      context: .
+      dockerfile: MockIntegration.Apis/Dockerfile
+    # networks:
+    #   - centauri-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_HTTP_PORTS=8020
+      - TZ=Asia/Karachi
+    restart: on-failure
+    depends_on:
+      - jaeger
+      - elasticsearch
+      - prometheus
+      - redis
        
 
   prometheus:
@@ -151,13 +194,12 @@ services:
   #   restart: on-failure
 
 volumes:
-  centauri-volume:
-    driver_opts:
-      type: none
-      device: /var/centauri
-      o: bind 
-  grafana-data:
-    external: true
+  # centauri-volume:
+  #   driver_opts:
+  #     type: none
+  #     device: /var/centauri
+  #     o: bind 
+  grafana-data:    
   elasticsearch-data:
 
 # networks:
