@@ -1,0 +1,8 @@
+{
+  "CacheSettings": {
+    "UseDistributedCache": true,
+    "PreferRedis": true,
+    "ConnectionString": "localhost:6379",
+    "Expiration": "02:30:00"
+  }
+}

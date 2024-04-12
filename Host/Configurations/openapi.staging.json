@@ -1,0 +1,14 @@
+{
+  "SwaggerSettings": {
+    "Enable": true,
+    "Title": "order agregator",
+    "Version": "1.0.0",
+    "Description": "Stage",
+    "ContactName": "Aleksey Krasnikov",
+    "ContactEmail": "hello@gmail.com",
+    "ContactUrl": "",
+    "License": true,
+    "LicenseName": "",
+    "LicenseUrl": ""
+  }
+}
