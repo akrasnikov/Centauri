@@ -2,7 +2,7 @@
   "CacheSettings": {
     "UseDistributedCache": true,
     "PreferRedis": true,
-    "ConnectionString": "host.docker.internal:6379",
+    "ConnectionString": "redis",
     "Expiration": "02:30:00"
   }
 }

@@ -1,70 +1,70 @@
 {
   "Requests": [
     {
-      "Url": "http://host.docker.internal:8020/orders",
+      "Url": "http://host-integration-v1:8020/orders",
       "Method": "GET",
       "QueryParams": {
         "query": ""
       }
     },
     {
-      "Url": "http://host.docker.internal:8030/orders",
+      "Url": "http://host-integration-v2:8030/orders",
       "Method": "GET",
       "QueryParams": {
         "query": ""
       }
     },
     {
-      "Url": "http://host.docker.internal:8040/orders",
+      "Url": "http://host-integration-v3:8040/orders",
       "Method": "GET",
       "QueryParams": {
         "query": ""
       }
     },
     {
-      "Url": "http://host.docker.internal:8020/orders",
+      "Url": "http://host-integration-v1:8020/orders",
       "Method": "GET",
       "QueryParams": {
         "query": ""
       }
     },
     {
-      "Url": "http://host.docker.internal:8040/orders",
+      "Url": "http://host-integration-v3:8040/orders",
       "Method": "GET",
       "QueryParams": {
         "query": ""
       }
     },
     {
-      "Url": "http://host.docker.internal:8020/orders",
+      "Url": "http://localhost:8020/orders",
       "Method": "GET",
       "QueryParams": {
         "query": ""
       }
     },
     {
-      "Url": "http://host.docker.internal:8030/orders",
+      "Url": "http://localhost:8030/orders",
       "Method": "GET",
       "QueryParams": {
         "query": ""
       }
     },
     {
-      "Url": "http://host.docker.internal:8020/orders",
+      "Url": "http://localhost:8020/orders",
       "Method": "GET",
       "QueryParams": {
         "query": ""
       }
     },
     {
-      "Url": "http://host.docker.internal:8040/orders",
+      "Url": "http://localhost:8040/orders",
       "Method": "GET",
       "QueryParams": {
         "query": ""
       }
     },
     {
-      "Url": "http://host.docker.internal:8030/orders",
+      "Url": "http://localhost:8030/orders",
       "Method": "GET",
       "QueryParams": {
         "query": ""

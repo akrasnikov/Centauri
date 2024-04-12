@@ -1,7 +1,7 @@
 {
   "LoggerSettings": {
     "AppName": "order agregator",
-    "ElasticSearchUrl": "http://host.docker.internal:9200",
+    "ElasticSearchUrl": "http://elasticsearch:9200",
     "WriteToFile": true,
     "StructuredConsoleLogging": false
   }

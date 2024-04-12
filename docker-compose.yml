@@ -125,7 +125,7 @@ services:
     image: jaegertracing/all-in-one:latest
     environment:
         - COLLECTOR_OTLP_ENABLED=true
-    ports:   
+    ports:
       - "16686:16686"
       - '4318:4318'
       - "4317:4317"
@@ -154,7 +154,7 @@ services:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
       # XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY: d1a66dfd-c4d3-4a0a-8290-2abcb83ab3aa
     depends_on:
-    - elasticsearch 
+    - elasticsearch
     # volumes:
     #   - ./kibana.yml:/usr/share/kibana/config/kibana.yml
     ports:
@@ -199,8 +199,10 @@ volumes:
   #     type: none
   #     device: /var/centauri
   #     o: bind 
-  grafana-data:    
+  grafana-data:
+    external: true
   elasticsearch-data:
+    external: true
 
 # networks:
 #   centauri-network:
