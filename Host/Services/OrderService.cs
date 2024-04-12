@@ -13,7 +13,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Host.Services
 {
-    [CustomLoggingFormatter]
+    //[CustomLoggingFormatter]
     public class OrderService : IOrderService
     {
         private readonly IBackgroundJobClient _job;
