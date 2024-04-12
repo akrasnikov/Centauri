@@ -2,7 +2,7 @@ using Host.Common.Interfaces;
 
 namespace Host.Infrastructure.Caching;
 
-public interface ICacheService : ITransientService
+public interface ICacheService 
 {
     T? Get<T>(string key);
     Task<T?> GetAsync<T>(string key, CancellationToken token = default);

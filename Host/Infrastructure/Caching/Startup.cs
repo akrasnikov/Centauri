@@ -29,7 +29,7 @@ internal static class Startup
                 services.AddDistributedMemoryCache();
             }
 
-            //services.AddTransient<ICacheService, DistributedCacheService>();
+            services.AddTransient<ICacheService, DistributedCacheService>();
         }
         return services;
     }
