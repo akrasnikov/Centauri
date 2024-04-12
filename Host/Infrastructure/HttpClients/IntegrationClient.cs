@@ -40,17 +40,19 @@ namespace Host.Infrastructure.HttpClients
             return _requests.Select(request => $"{request.Url}?from={orders.From}&to={orders.To}&time={orders.Time}").ToList();
         }
 
-        public async Task SendAsync(OrdersModel orders, CancellationToken cancellationToken = default)
+        public async Task SendAsync(OrdersModel order, CancellationToken cancellationToken = default)
         {
+            _logger.LogInformation($"start send request - id: {order.Id}");
             int batchSize = 10;
-            var batches = GenerateUrls(orders).Batch(batchSize);
+            var batches = GenerateUrls(order).Batch(batchSize);
             foreach (var urls in batches)
             {
-                await ProcessBatchAsync(urls.ToList(), orders, cancellationToken);
+                await ProcessBatchAsync(urls.ToList(), order, cancellationToken);
             }
         }
         private async Task ProcessBatchAsync(IList<string> urls, OrdersModel model, CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"start process batch - id: { model.Id}");
             var tasks = urls.Select(url => ProcessRequestAsync(url, model, cancellationToken));
             await Task.WhenAll(tasks).ConfigureAwait(false);
         }
@@ -59,6 +61,8 @@ namespace Host.Infrastructure.HttpClients
         {
             try
             {
+                _logger.LogInformation($"start process request - id: {model.Id}");
+
                 if (string.IsNullOrEmpty(url)) throw new ArgumentException($"'{nameof(url)}' cannot be null or empty.", nameof(url));
 
                 ArgumentNullException.ThrowIfNull(model);
@@ -67,27 +71,30 @@ namespace Host.Infrastructure.HttpClients
 
                 if (response.IsSuccessStatusCode)
                 {
+                    _logger.LogInformation($"process request is success -> id: {model.Id}");
+                   
                     var body = await response.Content.ReadAsStringAsync(cancellationToken) ?? throw new InvalidOperationException("reason content");
 
-                    var order = JsonSerializer.Deserialize<IReadOnlyList<Order>>(body) ?? throw new InvalidOperationException("reason deserialize");
+                    var order = JsonSerializer.Deserialize<List<Order>>(body) ?? throw new InvalidOperationException("reason deserialize");
 
                     await model.AddAsync(order, _instrumentation, _notificationService, cancellationToken);
 
                     await _cacheService.SetAsync(model.Id, model, cancellationToken);
 
-                    _logger.LogInformation("response received: " + body);
+                    _logger.LogInformation($"response received -> id: {model.Id} - list : {JsonSerializer.Serialize(order)}");
 
                     return;
                 }
-                _logger.LogError($"request to {url} failed with status code {response.StatusCode}");
+
+                _logger.LogError($"request to {url} - id: {model.Id} -> failed with status code {response.StatusCode}");
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError($"error sending request to {url}: {ex.Message}");
+                _logger.LogError($"error sending for id: {model.Id} for url:  {url}: {ex.Message}");
             }
             catch (Exception ex)
             {
-                _logger.LogError($"error sending request to {url}: {ex.Message}");
+                _logger.LogError($"error sending for id: {model.Id} for url: {url}: {ex.Message}");
             }
         }
     }
