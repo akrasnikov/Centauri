@@ -39,12 +39,9 @@ namespace Host
              
 
                 var app = builder.Build();
-                // Configure the HTTP request pipeline.
-                if (app.Environment.IsDevelopment())
-                {
-                    app.UseSwagger();
-                    app.UseSwaggerUI();
-                }
+                // Configure the HTTP request pipeline.                
+                app.UseSwagger();
+                app.UseSwaggerUI();
                 //app.UseSerilogRequestLogging();
 
                 app.UseHangfireDashboard(builder.Configuration);
