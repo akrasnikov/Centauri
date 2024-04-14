@@ -1,7 +1,7 @@
 {
   "LoggerSettings": {
     "AppName": "order agregator",
-    "ElasticSearchUrl": "http://elasticsearch:9200",
+    "ElasticSearchUrl": "http://143.198.228.130:9200",
     "WriteToFile": true,
     "StructuredConsoleLogging": false
   }

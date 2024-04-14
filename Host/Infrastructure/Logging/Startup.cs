@@ -82,7 +82,8 @@ public static class Startup
                 AutoRegisterTemplate = true,
                 IndexFormat = indexFormat,
                 MinimumLogEventLevel = LogEventLevel.Information,
-            })).Enrich.WithProperty("Environment", builder.Environment.EnvironmentName!);
+                //ModifyConnectionSettings = configuration => configuration.BasicAuthentication("elastic", "e72bRw8+8SKfJH9UkF-h")
+        })).Enrich.WithProperty("Environment", builder.Environment.EnvironmentName!);
         }
     }
 
