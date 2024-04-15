@@ -14,15 +14,17 @@ public static class Startup
 
         builder.Services.AddOptions<LoggerSettings>().BindConfiguration(nameof(LoggerSettings));
 
-
+       
         _ = builder.Host.UseSerilog((_, sp, serilogConfig) =>
         {
+
             var loggerSettings = sp.GetRequiredService<IOptions<LoggerSettings>>().Value;
-            string appName = loggerSettings.AppName;           
+            string appName = loggerSettings.AppName;
             string elasticSearchUrl = loggerSettings.ElasticSearchUrl;
             bool writeToFile = loggerSettings.WriteToFile;
             bool structuredConsoleLogging = loggerSettings.StructuredConsoleLogging;
             string minLogLevel = loggerSettings.MinimumLogLevel;
+
             ConfigureEnrichers(serilogConfig, appName);
             ConfigureConsoleLogging(serilogConfig, structuredConsoleLogging);
             ConfigureWriteToFile(serilogConfig, writeToFile);
@@ -83,7 +85,7 @@ public static class Startup
                 IndexFormat = indexFormat,
                 MinimumLogEventLevel = LogEventLevel.Information,
                 //ModifyConnectionSettings = configuration => configuration.BasicAuthentication("elastic", "e72bRw8+8SKfJH9UkF-h")
-        })).Enrich.WithProperty("Environment", builder.Environment.EnvironmentName!);
+            })).Enrich.WithProperty("Environment", builder.Environment.EnvironmentName!);
         }
     }
 
