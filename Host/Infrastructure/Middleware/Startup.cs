@@ -1,11 +1,16 @@
 ﻿namespace Host.Infrastructure.Middleware;
 
-internal static class Startup
+public static class Startup
 {
-    internal static IServiceCollection AddExceptionMiddleware(this IServiceCollection services) =>
+    public static IServiceCollection AddExceptionMiddleware(this IServiceCollection services) =>
         services.AddScoped<ExceptionMiddleware>();
 
-    internal static IApplicationBuilder UseExceptionMiddleware(this IApplicationBuilder app) =>
+    public static IApplicationBuilder UseExceptionMiddleware(this IApplicationBuilder app) =>
         app.UseMiddleware<ExceptionMiddleware>();
-     
+
+    public static IApplicationBuilder UseLoggerMiddleware(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<LogContextMiddleware>();
+    }
+
 }
