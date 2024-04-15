@@ -8,7 +8,13 @@ using Host.Infrastructure.Middleware;
 using Host.Infrastructure.Notifications;
 using Host.Services;
 using OpenTelemetry.Metrics;
+using PostSharp.Patterns.Diagnostics;
+using PostSharp.Patterns.Diagnostics.Backends.Serilog;
+using PostSharp.Patterns.Diagnostics.RecordBuilders;
 using Serilog;
+
+
+//[assembly: LogTrace(AttributeTargetElements = MulticastTargets.Method, AttributeTargetTypeAttributes = MulticastAttributes.Public, AttributeTargetMemberAttributes = MulticastAttributes.Public)]
 
 namespace Host
 {
@@ -19,10 +25,20 @@ namespace Host
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
+                builder.Logging.Configure(_ => _.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId);
                 builder.AddConfigurations().RegisterSerilog();
                 builder.Services.AddControllers();
                 builder.Services.AddServices();
-                //LoggingServices.DefaultBackend = new SerilogLoggingBackend(Log.Logger);
+
+                var backend = new SerilogLoggingBackend(Log.Logger);
+                backend.Options.IncludeActivityExecutionTime = true;
+                backend.Options.IncludeExceptionDetails = true;
+                backend.Options.SemanticParametersTreatedSemantically = SemanticParameterKind.All;
+                backend.Options.IncludedSpecialProperties = SerilogSpecialProperties.All;
+                backend.Options.ContextIdGenerationStrategy = ContextIdGenerationStrategy.Hierarchical;
+                LoggingServices.DefaultBackend = backend;
+
+
                 builder.Services.AddControllers();
                 builder.Services.AddCaching(builder.Configuration);
                 builder.Services.AddNotifications(builder.Configuration);
@@ -44,6 +60,7 @@ namespace Host
                 app.UseLoggerMiddleware();
                 app.UseSwagger();
                 app.UseSwaggerUI();
+
                 //app.UseSerilogRequestLogging();
 
                 app.UseHangfireDashboard(builder.Configuration);

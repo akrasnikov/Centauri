@@ -1,4 +1,5 @@
 ﻿using Host.Extensions;
+using Host.Infrastructure.Logging.PostSharp;
 using Host.Interfaces;
 using Host.Models;
 using Host.Requests;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Host.Controllers
 {
 
+    [LogTrace]
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
