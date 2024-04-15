@@ -39,7 +39,9 @@ namespace Host
              
 
                 var app = builder.Build();
-                // Configure the HTTP request pipeline.                
+                // Configure the HTTP request pipeline.
+                
+                app.UseLoggerMiddleware();
                 app.UseSwagger();
                 app.UseSwaggerUI();
                 //app.UseSerilogRequestLogging();
