@@ -1,6 +1,6 @@
 {
   "LoggerSettings": {
-    "AppName": "mock web api",
+    "AppName": "mock.web.api",
     "ElasticSearchUrl": "http://143.198.228.130:9200",
     "WriteToFile": true,
     "StructuredConsoleLogging": false

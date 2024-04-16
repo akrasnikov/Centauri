@@ -9,6 +9,16 @@
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://*:8020"
+    },
+    "Staging": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Staging"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://*:8020"
     }
   }
 }
