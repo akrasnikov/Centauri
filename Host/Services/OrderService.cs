@@ -34,11 +34,11 @@ namespace Host.Services
             _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
         }
 
-        public async Task<OrdersModel> CreateAsync(OrderRequest request, CancellationToken cancellationToken = default)
+        public async Task<OrdersModel> CreateAsync(OrderRequest request, string correlationId, CancellationToken cancellationToken = default)
         {
             var order = new OrdersModel($"{Guid.NewGuid()}", request.From, request.To, request.Time);           
            
-            _job.Enqueue(() => _integration.SendAsync(order, cancellationToken));
+            _job.Enqueue(() => _integration.SendAsync(order, correlationId, cancellationToken));
 
             return order;
         }
