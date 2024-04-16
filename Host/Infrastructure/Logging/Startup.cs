@@ -44,6 +44,7 @@ public static class Startup
                         .Enrich.WithMachineName()
                         .Enrich.WithProcessId()
                         .Enrich.WithThreadId()
+                        .Enrich.WithCorrelationIdHeader("custom-correlation-id")
                         .Enrich.FromLogContext();
     }
 
@@ -55,7 +56,7 @@ public static class Startup
         }
         else
         {
-            serilogConfig.WriteTo.Async(wt => wt.Console());
+            serilogConfig.WriteTo.Async(wt => wt.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3} {CorrelationId}] {Message}{NewLine}{Exception}"));
         }
     }
 

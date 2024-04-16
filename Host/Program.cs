@@ -7,11 +7,14 @@ using Host.Infrastructure.Logging;
 using Host.Infrastructure.Middleware;
 using Host.Infrastructure.Notifications;
 using Host.Services;
+using Microsoft.OpenApi.Models;
 using OpenTelemetry.Metrics;
 using PostSharp.Patterns.Diagnostics;
 using PostSharp.Patterns.Diagnostics.Backends.Serilog;
 using PostSharp.Patterns.Diagnostics.RecordBuilders;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 
 //[assembly: LogTrace(AttributeTargetElements = MulticastTargets.Method, AttributeTargetTypeAttributes = MulticastAttributes.Public, AttributeTargetMemberAttributes = MulticastAttributes.Public)]
@@ -21,11 +24,11 @@ namespace Host
     public class Program
     {
         public static void Main(string[] args)
-        {           
+        {
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
-                builder.Logging.Configure(_ => _.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId);
+                builder.Logging.Configure(_ => _.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId);                
                 builder.AddConfigurations().RegisterSerilog();
                 builder.Services.AddControllers();
                 builder.Services.AddServices();
@@ -43,7 +46,7 @@ namespace Host
                 builder.Services.AddCaching(builder.Configuration);
                 builder.Services.AddNotifications(builder.Configuration);
                 builder.Services.AddExceptionMiddleware();
-            
+
                 builder.Services.AddBackgroundServices(builder.Configuration);
                 builder.Services.AddIntegration(builder.Configuration);
                 builder.Services.AddInstrumentation(builder.Configuration);
@@ -60,7 +63,8 @@ namespace Host
                 app.UseLoggerMiddleware();
                 app.UseSwagger();
                 app.UseSwaggerUI();
-
+                app.UseHeaderPropagation();
+                app.UseLoggerMiddleware();
                 //app.UseSerilogRequestLogging();
 
                 app.UseHangfireDashboard(builder.Configuration);
