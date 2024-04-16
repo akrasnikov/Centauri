@@ -15,7 +15,7 @@ namespace Host.Infrastructure.Tracing
         {
             if (string.IsNullOrWhiteSpace(activityName))
             {
-                return new(ActivityName);
+                return new(ServiceName);
             }
 
             return new(activityName);

@@ -44,11 +44,14 @@ namespace Host.Extensions
         {
             services
                 .AddOpenTelemetry()
+                .ConfigureResource(resource => resource.AddService(ActivityProvider.ServiceName))
                     .WithTracing(builder => builder
-                    .AddSource(ActivityProvider.ActivityName)
-                    .AddAspNetCoreInstrumentation(options => options.RecordException = true)
+                    .AddSource(ActivityProvider.ServiceName)
+                    .SetSampler(new AlwaysOnSampler())
+                    .AddHttpClientInstrumentation()
                     .AddAspNetCoreInstrumentation(opt =>
                     {
+                        opt.RecordException = true;
                         opt.EnrichWithHttpRequest = (activity, httpRequest) =>
                         {
                             var correlationId = httpRequest.HttpContext.TraceIdentifier;

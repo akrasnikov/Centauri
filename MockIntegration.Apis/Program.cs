@@ -41,7 +41,7 @@ namespace Host.Integration
                 openTelemetryBuilder
                     .WithTracing(tracerProviderBuilder =>
                     tracerProviderBuilder
-                    .AddSource(ActivityProvider.ActivityName)
+                    .AddSource(ActivityProvider.ServiceName)
                     .AddAspNetCoreInstrumentation(options => options.RecordException = true)
                     .SetSampler(new AlwaysOnSampler()) // https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/docs/trace/customizing-the-sdk/README.md#samplers
                     .AddHttpClientInstrumentation()
