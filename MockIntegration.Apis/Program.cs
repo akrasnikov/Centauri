@@ -4,6 +4,8 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Events;
+using Host.Integration.Configurations;
+using Host.Integration.Logging;
 
 //[assembly: LoggingAspect]
 namespace Host.Integration
@@ -12,17 +14,19 @@ namespace Host.Integration
     {
         public static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .CreateBootstrapLogger();
+            //Log.Logger = new LoggerConfiguration()
+            //    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+            //    .Enrich.FromLogContext()
+            //    .Enrich.WithCorrelationIdHeader("custom-correlation-id")
+            //    .WriteTo.Console()
+            //    .CreateBootstrapLogger();
 
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
-                //builder.Services.AddSerilog();
-                builder.Host.UseSerilog(SeriLogger.Configure);
+
+                builder.AddConfigurations().RegisterSerilog();
+
                 // Add services to the container.
                 builder.Services.AddTransient<IDummyClass, DummyClass>();
                 builder.Services.AddControllers();
@@ -47,7 +51,7 @@ namespace Host.Integration
 
                 //builder.Services.AddOpenTelemetryTracing(builder.Configuration);
 
-                
+
 
                 var app = builder.Build();
                 app.UseSerilogRequestLogging(options =>
@@ -72,7 +76,7 @@ namespace Host.Integration
 
                 app.UseAuthorization();
 
-
+                app.UseMiddleware<RequestContextLoggingMiddleware>();
                 app.MapControllers();
 
                 app.Run();
