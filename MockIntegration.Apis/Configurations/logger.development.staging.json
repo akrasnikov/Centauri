@@ -1,0 +1,7 @@
+{
+  "LoggerSettings": {
+    "AppName": "order agregator",
+    "WriteToFile": false,
+    "StructuredConsoleLogging": true
+  }
+}
