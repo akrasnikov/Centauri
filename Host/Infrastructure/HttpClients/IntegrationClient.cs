@@ -63,8 +63,7 @@ namespace Host.Infrastructure.HttpClients
         private async Task ProcessRequestAsync(string url,  string correlationId, OrdersModel model, CancellationToken cancellationToken)
         {
             try
-            {
-                //LogContext.PushProperty("CorrelationId", model.Id);
+            {                
                 _logger.LogInformation($"start process request - id: {model.Id}");
 
                 if (string.IsNullOrEmpty(url)) throw new ArgumentException($"'{nameof(url)}' cannot be null or empty.", nameof(url));

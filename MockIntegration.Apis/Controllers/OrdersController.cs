@@ -3,9 +3,8 @@ using Host.Integration.Models;
 using Host.Integration.Services;
 using Host.Integration.Wrappers;
 using Microsoft.AspNetCore.Mvc;
-using OpenTelemetry.Trace;
 using System.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
+using System.Reflection;
 
 namespace Host.Integration.Controllers
 {
@@ -13,6 +12,8 @@ namespace Host.Integration.Controllers
     {
         private  readonly IDummyClass _dummyClass;
         private readonly ILogger<OrdersController> _logger;
+
+
 
         public OrdersController(IDummyClass dummyClass, ILogger<OrdersController> logger)
         {
