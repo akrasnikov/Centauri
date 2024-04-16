@@ -14,9 +14,14 @@ Your API should be available at
 on server
 - http://104.131.189.170/swagger/index.html - order-webapi
 - http://104.131.189.170:8020/swagger/index.html - moq-webap
+- http://104.131.189.170:8030/swagger/index.html - moq-webap
+- http://104.131.189.170:8040/swagger/index.html - moq-webap
 
 - http://104.131.189.170:30091/  - grafana  user & password = grafana
 - http://104.131.189.170:30090/ - prometheus
+
+- elasticsearch & kibana
+- http://143.198.228.130:5601/app/discover#/?_g=(filters:!(),refreshInterval:(pause:!t,value:60000),time:(from:now%2Fw,to:now%2Fw))&_a=(columns:!(message,fields.CorrelationId),filters:!(),index:c37a7dde-fe6f-42f0-804d-9b13647cc83f,interval:auto,query:(language:kuery,query:''),sort:!(!('@timestamp',desc))) 
 
 ## Roadmap
  
