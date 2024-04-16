@@ -47,7 +47,14 @@ namespace Host.Extensions
                     .WithTracing(builder => builder
                     .AddSource(ActivityProvider.ActivityName)
                     .AddAspNetCoreInstrumentation(options => options.RecordException = true)
-                    .AddHttpClientInstrumentation()
+                    .AddAspNetCoreInstrumentation(opt =>
+                    {
+                        opt.EnrichWithHttpRequest = (activity, httpRequest) =>
+                        {
+                            var correlationId = httpRequest.HttpContext.TraceIdentifier;
+                            activity.SetBaggage("Correlation-Id", correlationId);
+                        };
+                    })
                     .AddConsoleExporter()
                     .AddOtlpExporter())
                 .WithMetrics(metrics => metrics
