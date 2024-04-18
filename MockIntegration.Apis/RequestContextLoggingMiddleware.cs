@@ -6,7 +6,6 @@ namespace Host.Integration
     public class RequestContextLoggingMiddleware
     {
         private const string XCorrelationIdHeaderName = "X-Correlation-Id";
-        private const string CorrelationIdHeaderName = "custom-correlation-id";
         private readonly RequestDelegate _next;
 
         public RequestContextLoggingMiddleware(RequestDelegate next)
@@ -27,13 +26,7 @@ namespace Host.Integration
 
         private static string GetCorrelationId(HttpContext context)
         {
-            context.Request.Headers.TryGetValue(
-                XCorrelationIdHeaderName, out StringValues xcorrelationId);
-
-            context.Request.Headers.TryGetValue(
-                CorrelationIdHeaderName, out StringValues correlationId);
-
-            context.Request.Headers.TryAdd(CorrelationIdHeaderName, correlationId);
+            context.Request.Headers.TryGetValue(XCorrelationIdHeaderName, out StringValues xcorrelationId);
             return xcorrelationId.FirstOrDefault() ?? context.TraceIdentifier;
         }
     }

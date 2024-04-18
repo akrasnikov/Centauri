@@ -1,52 +1,35 @@
 ﻿using Bogus;
 using Host.Integration.Models;
-using Host.Integration.Services;
+using Host.Integration.Tracing.Aspect;
 using Host.Integration.Wrappers;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Reflection;
 
 namespace Host.Integration.Controllers
 {
     public class OrdersController : Controller
     {
-        private  readonly IDummyClass _dummyClass;
         private readonly ILogger<OrdersController> _logger;
-
-
-
-        public OrdersController(IDummyClass dummyClass, ILogger<OrdersController> logger)
+        public OrdersController(ILogger<OrdersController> logger)
         {
-            _dummyClass = dummyClass ?? throw new ArgumentNullException(nameof(dummyClass));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [ProducesResponseType(typeof(IReadOnlyCollection<OrderModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response<OrderModel>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [OrderTracingInterceptor(ActivityName = "get-mock-order")]
         [HttpGet("orders/")]
         public async Task<IActionResult> GetAsync([FromQuery] string from, [FromQuery] string to, [FromQuery] DateTime time)
         {
-            _logger.LogInformation("get orders integration");
-            using var activitySource = ActivityProvider.Create();
-            using var activity = activitySource.StartActivity($"{ActivityProvider.MethodName}: get orders ");
-            activity?.SetTag(ActivityProvider.MethodArgument, $"from:{from} - to: {to} - time: {time}");
-
-            var dummy = _dummyClass.GetDummy("hello");
-            var activityId = Activity.Current.Id;
-            var id = HttpContext.TraceIdentifier;
-            var orderGenerator = GetOrderGenerator(from, to, time);
-            var NumberOfOrders = 2;
-            var generatedOrders = orderGenerator.Generate(NumberOfOrders);
-            List<OrderModel> Orders = new();
-            Orders.AddRange(generatedOrders);
-
+            _logger.LogInformation("get orders integration");            
+            var generatedOrders = GetOrderGenerator(from, to, time).Generate(2);
             return Ok(generatedOrders);
         }
 
+
+        [OrderTracingInterceptor(ActivityName = "mock-generator-order")]
         private static Faker<OrderModel> GetOrderGenerator(string @from, string to, DateTime time)
         {
-
             if (time == default)
             {
                 time = DateTime.Now;

@@ -4,11 +4,13 @@ using Host.Infrastructure.Caching;
 using Host.Infrastructure.HttpClients;
 using Host.Infrastructure.Logging.PostSharp;
 using Host.Infrastructure.Tracing;
+using Host.Infrastructure.Tracing.Aspect;
 using Host.Interfaces;
 using Host.Models;
 using Host.Requests;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
+using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Host.Services
@@ -34,23 +36,21 @@ namespace Host.Services
             _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
         }
 
-        public async Task<OrdersModel> CreateAsync(OrderRequest request, string correlationId, CancellationToken cancellationToken = default)
+        [OrderTracingInterceptor(ActivityName = "create bakground task")]
+        public async Task<OrdersModel> CreateAsync(OrderRequest request, CancellationToken cancellationToken = default)
         {
-            var order = new OrdersModel($"{Guid.NewGuid()}", request.From, request.To, request.Time);           
-           
-            _job.Enqueue(() => _integration.SendAsync(order, correlationId, cancellationToken));
+            var order = new OrdersModel($"{Guid.NewGuid()}", request.From, request.To, request.Time);         
+
+            _job.Enqueue(() => _integration.SendAsync(order, cancellationToken));
 
             return order;
         }
 
+        [OrderTracingInterceptor(ActivityName = "get order")]
         public async Task<OrdersModel> GetAsync(string id, CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("start get order by id");
-            using var activitySource = ActivityProvider.Create();
-            using var activity = activitySource.StartActivity($"{ActivityProvider.MethodName}: {nameof(GetAsync).ToLowerInvariant()}");
-            activity?.SetTag(ActivityProvider.MethodArgument, $"id: {id}");
-            return await _cacheService.GetAsync<OrdersModel>(id, cancellationToken) ?? throw new BadHttpRequestException("no key exists");           
-        } 
-         
+            return await _cacheService.GetAsync<OrdersModel>(id, cancellationToken) ?? throw new BadHttpRequestException("no key exists");
+        }
+
     }
 }

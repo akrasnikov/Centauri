@@ -1,17 +1,13 @@
-﻿using Host.Extensions;
-using Host.Infrastructure.Logging.PostSharp;
-using Host.Infrastructure.Tracing;
-using Host.Interfaces;
+﻿using Host.Interfaces;
 using Host.Models;
 using Host.Requests;
 using Host.Wrappers;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace Host.Controllers
 {
 
-    [LogTrace]
+
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
@@ -29,10 +25,7 @@ namespace Host.Controllers
         [HttpPost("orders/order")]
         public async Task<IActionResult> CreateAsync([FromBody] OrderRequest request)
         {
-            var correlationId = Activity.Current.GetBaggageItem("Correlation-Id");
-            var activity = ActivityProvider.Create().StartActivity("controller:create:order");
-            activity.AddTag("correlationId", correlationId);
-            var response = await _orderService.CreateAsync(request, correlationId, HttpContext.RequestAborted);
+            var response = await _orderService.CreateAsync(request, HttpContext.RequestAborted);
             return Ok(response);
         }
 

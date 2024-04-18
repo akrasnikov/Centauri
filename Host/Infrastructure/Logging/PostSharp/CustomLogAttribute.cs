@@ -9,7 +9,7 @@ using System.Text.Json;
 namespace Host.Infrastructure.Logging.PostSharp
 {
     [PSerializable]
-    public class LogTraceAttribute : OnMethodBoundaryAspect
+    public class CustomLogAttribute : OnMethodBoundaryAspect
     {
         /// <summary>
         /// On Method Entry

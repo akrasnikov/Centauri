@@ -1,3 +1,4 @@
+using Elastic.Apm.SerilogEnricher;
 using Figgle;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -44,6 +45,8 @@ public static class Startup
                         .Enrich.WithMachineName()
                         .Enrich.WithProcessId()
                         .Enrich.WithThreadId()
+                        .Enrich.WithCorrelationId()
+                        .Enrich.WithElasticApmCorrelationInfo()
                         .Enrich.WithCorrelationIdHeader("custom-correlation-id")
                         .Enrich.FromLogContext();
     }

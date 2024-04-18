@@ -10,8 +10,7 @@ public static class Startup
 
     public static IApplicationBuilder UseLoggerMiddleware(this IApplicationBuilder app)
     {
-        app.UseMiddleware<RequestContextLoggingMiddleware>();
-        return app.UseMiddleware<LogContextMiddleware>();        
+        return app;     
     }
 
 }

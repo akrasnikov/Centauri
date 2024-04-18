@@ -1,11 +1,11 @@
-using Host.Integration.Services;
-using Host.Integration.Extensions;
+using Host.Integration.Configurations;
+using Host.Integration.Logging;
+using Host.Integration.Tracing;
+using Microsoft.Extensions.Primitives;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Events;
-using Host.Integration.Configurations;
-using Host.Integration.Logging;
 
 //[assembly: LoggingAspect]
 namespace Host.Integration
@@ -27,31 +27,33 @@ namespace Host.Integration
 
                 builder.AddConfigurations().RegisterSerilog();
 
-                // Add services to the container.
-                builder.Services.AddTransient<IDummyClass, DummyClass>();
+                // Add services to the container.               
                 builder.Services.AddControllers();
                 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
                 builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddSwaggerGen();
 
-                var openTelemetryBuilder =
-                    builder.Services.AddOpenTelemetry()
-                    .ConfigureResource(resource => resource.AddService(ActivityProvider.ServiceName));
-
-                openTelemetryBuilder
-                    .WithTracing(tracerProviderBuilder =>
-                    tracerProviderBuilder
-                    .AddSource(ActivityProvider.ActivityName)
-                    .AddAspNetCoreInstrumentation(options => options.RecordException = true)
-                    .SetSampler(new AlwaysOnSampler()) // https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/docs/trace/customizing-the-sdk/README.md#samplers
+                builder.Services.AddOpenTelemetry()
+                    .WithTracing(builder => builder
+                    .AddSource(OrderTracingFactory.ActivityNameOrderSource)
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(OrderTracingFactory.ServiceName))
+                    .AddAspNetCoreInstrumentation(opt =>
+                    {
+                        opt.RecordException = true;
+                        opt.EnrichWithHttpRequest = (activity, httpRequest) =>
+                        {
+                            httpRequest.HttpContext.Request.Headers.TryGetValue("X-Correlation-Id", out StringValues correlationId);
+                            var traceId = httpRequest.HttpContext.TraceIdentifier;
+                            activity.SetBaggage("Correlation-Id", correlationId.FirstOrDefault() ?? "default");
+                            activity.SetBaggage("Trace-Id", traceId ?? "default");
+                        };
+                    })
+                    //.SetSampler(new AlwaysOnSampler()) // https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/docs/trace/customizing-the-sdk/README.md#samplers
                     .AddHttpClientInstrumentation()
                 .AddConsoleExporter()
-                // 4317 // add the OpenTelemetry.Exporter.OpenTelemetryProtocol nuget package
-                .AddOtlpExporter());
+                .AddOtlpExporter(opts => { opts.Endpoint = new Uri("http://104.131.189.170:4317"); }));
 
                 //builder.Services.AddOpenTelemetryTracing(builder.Configuration);
-
-
 
                 var app = builder.Build();
                 app.UseSerilogRequestLogging(options =>

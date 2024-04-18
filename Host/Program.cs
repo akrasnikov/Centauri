@@ -1,20 +1,17 @@
 using Host.Configurations;
-using Host.Extensions;
 using Host.Infrastructure.BackgroundJobs;
 using Host.Infrastructure.Caching;
 using Host.Infrastructure.HttpClients;
 using Host.Infrastructure.Logging;
 using Host.Infrastructure.Middleware;
 using Host.Infrastructure.Notifications;
+using Host.Infrastructure.Tracing;
 using Host.Services;
-using Microsoft.OpenApi.Models;
 using OpenTelemetry.Metrics;
 using PostSharp.Patterns.Diagnostics;
 using PostSharp.Patterns.Diagnostics.Backends.Serilog;
 using PostSharp.Patterns.Diagnostics.RecordBuilders;
 using Serilog;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Reflection;
 
 
 //[assembly: LogTrace(AttributeTargetElements = MulticastTargets.Method, AttributeTargetTypeAttributes = MulticastAttributes.Public, AttributeTargetMemberAttributes = MulticastAttributes.Public)]
@@ -28,18 +25,19 @@ namespace Host
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
-                builder.Logging.Configure(_ => _.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId);                
+                builder.Logging.Configure(_ => _.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId); 
+                
                 builder.AddConfigurations().RegisterSerilog();
                 builder.Services.AddControllers();
                 builder.Services.AddServices();
 
-                var backend = new SerilogLoggingBackend(Log.Logger);
-                backend.Options.IncludeActivityExecutionTime = true;
-                backend.Options.IncludeExceptionDetails = true;
-                backend.Options.SemanticParametersTreatedSemantically = SemanticParameterKind.All;
-                backend.Options.IncludedSpecialProperties = SerilogSpecialProperties.All;
-                backend.Options.ContextIdGenerationStrategy = ContextIdGenerationStrategy.Hierarchical;
-                LoggingServices.DefaultBackend = backend;
+                //var backend = new SerilogLoggingBackend(Log.Logger);
+                //backend.Options.IncludeActivityExecutionTime = true;
+                //backend.Options.IncludeExceptionDetails = true;
+                //backend.Options.SemanticParametersTreatedSemantically = SemanticParameterKind.All;
+                //backend.Options.IncludedSpecialProperties = SerilogSpecialProperties.All;
+                //backend.Options.ContextIdGenerationStrategy = ContextIdGenerationStrategy.Hierarchical;
+                //LoggingServices.DefaultBackend = backend;
 
 
                 builder.Services.AddControllers();
@@ -55,20 +53,12 @@ namespace Host
                 builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddSwaggerGen();
 
-             
-
                 var app = builder.Build();
-                // Configure the HTTP request pipeline.
-                
-                app.UseLoggerMiddleware();
+                // Configure the HTTP request pipeline. 
                 app.UseSwagger();
                 app.UseSwaggerUI();
-                app.UseHeaderPropagation();
-                app.UseLoggerMiddleware();
-                //app.UseSerilogRequestLogging();
-
+                app.UseHeaderPropagation(); 
                 app.UseHangfireDashboard(builder.Configuration);
-
                 app.UseExceptionMiddleware();
 
                 app.UseHttpsRedirection();
@@ -78,6 +68,7 @@ namespace Host
                 app.MapControllers();
 
                 app.UseOpenTelemetryPrometheusScrapingEndpoint();
+
                 app.Run();
             }
             catch (Exception ex)
