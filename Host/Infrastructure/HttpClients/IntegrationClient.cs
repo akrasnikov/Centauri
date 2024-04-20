@@ -1,13 +1,12 @@
-﻿using Host.Extensions;
+﻿using Host.Entity;
+using Host.Extensions;
 using Host.Infrastructure.Caching;
 using Host.Infrastructure.Metrics;
 using Host.Infrastructure.Notifications;
 using Host.Infrastructure.Tracing;
 using Host.Infrastructure.Tracing.Aspect;
-using Host.Models;
 using Microsoft.Extensions.Options;
 using Serilog.Context;
-using System.Diagnostics;
 using System.Text.Json;
 
 
@@ -39,62 +38,68 @@ namespace Host.Infrastructure.HttpClients
             _requests = options.Value.Requests ?? throw new ArgumentNullException(nameof(options));
         }
 
-        public List<string> GenerateUrls(OrdersModel orders)
+        public IEnumerable<IEnumerable<string>> Urls(Orders orders)
         {
-            return _requests.Select(request => $"{request.Url}?from={orders.From}&to={orders.To}&time={orders.Time}").ToList();
+            return
+                _requests
+                .Select(request => $"{request.Url}?from={orders.From}&to={orders.To}&time={orders.Time}")
+                .Batch(10);
         }
 
         [OrderTracingInterceptor(ActivityName = "process-create-request")]
-        public async Task SendAsync(OrdersModel model, CancellationToken cancellationToken = default)
+        public async Task SendAsync(Orders orders, CancellationToken cancellationToken = default)
         {
-            using var log = LogContext.PushProperty(OrderTracingFactory.CorelationId, model.Id);
-            var batches = GenerateUrls(model).Batch(10);
+            using var log = LogContext.PushProperty(OrderTracingFactory.CorelationId, orders.Id);
 
-            _logger.LogInformation($"process batch ");
-
-            foreach (var urls in batches)
-            {               
-                var tasks = urls.Select(url => ProcessRequestAsync(url, model, cancellationToken));
+            foreach (var urls in Urls(orders))
+            {
+                var tasks = urls.Select(url => ProcessRequestAsync(url, orders, cancellationToken));
                 await Task.WhenAll(tasks).ConfigureAwait(false);
             }
+            await _cacheService.SetAsync(orders.Id, orders, cancellationToken);
         }
 
+
         [OrderTracingInterceptor(ActivityName = "process-send-request")]
-        private async Task ProcessRequestAsync(string url, OrdersModel model, CancellationToken cancellationToken)
+        private async Task ProcessRequestAsync(string url, Orders model, CancellationToken cancellationToken)
         {
             try
             {
-                if (string.IsNullOrEmpty(url)) throw new ArgumentException($"'{nameof(url)}' cannot be null or empty.", nameof(url));
+                if (string.IsNullOrEmpty(url))
+                    throw new ArgumentException($"'{nameof(url)}' cannot be null or empty.", nameof(url));
+
                 ArgumentNullException.ThrowIfNull(model);
+
                 using var request = new HttpRequestMessage(HttpMethod.Get, url);
+
                 request.Headers.TryAddWithoutValidation("X-Correlation-Id", model.Id);
 
                 using var response = await _client.SendAsync(request, cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var body = await response.Content.ReadAsStringAsync(cancellationToken) ?? throw new InvalidOperationException("reason content");
+                    var order =
+                        await response
+                        .Content
+                        .ReadFromJsonAsync<List<Order>>(cancellationToken)
+                        ?? throw new InvalidOperationException("reason content");
 
-                    var order = JsonSerializer.Deserialize<List<Order>>(body) ?? throw new InvalidOperationException("reason deserialize");
-
-                    await model.AddAsync(order, _instrumentation, _notificationService, cancellationToken);
-
-                    await _cacheService.SetAsync(model.Id, model, cancellationToken);
+                    model.Add(order);
 
                     _logger.LogInformation($"response received -> id: {model.Id} - list : {JsonSerializer.Serialize(order)}");
 
                     return;
                 }
 
-                _logger.LogError($"request to {url} - id: {model.Id} -> failed with status code {response.StatusCode}");
+                _logger.LogError($"order id: {model.Id} failed with status code {response.StatusCode}");
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError($"error sending for id: {model.Id} for url:  {url}: {ex.Message}");
+                _logger.LogError($"order id: {model.Id} for url: {url}: {ex.Message}");
             }
             catch (Exception ex)
             {
-                _logger.LogError($"error sending for id: {model.Id} for url: {url}: {ex.Message}");
+                _logger.LogError($"order id: {model.Id} for url: {url}: {ex.Message}");
             }
         }
     }

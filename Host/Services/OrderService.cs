@@ -1,17 +1,12 @@
 ﻿using Hangfire;
-using Host.Common.Interfaces;
+using Host.Entity;
 using Host.Infrastructure.Caching;
 using Host.Infrastructure.HttpClients;
-using Host.Infrastructure.Logging.PostSharp;
-using Host.Infrastructure.Tracing;
 using Host.Infrastructure.Tracing.Aspect;
 using Host.Interfaces;
 using Host.Models;
 using Host.Requests;
 using Microsoft.Extensions.Options;
-using StackExchange.Redis;
-using System.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Host.Services
 {
@@ -37,16 +32,19 @@ namespace Host.Services
         }
 
         [OrderTracingInterceptor(ActivityName = "create bakground task")]
-        public async Task<OrdersModel> CreateAsync(OrderRequest request, CancellationToken cancellationToken = default)
+        public OrderModel Create(OrderRequest request, CancellationToken cancellationToken = default)
         {
-            var order = new OrdersModel($"{Guid.NewGuid()}", request.From, request.To, request.Time);         
+            var order = new Orders($"{Guid.NewGuid()}", request.From, request.To, request.Time);
 
             _job.Enqueue(() => _integration.SendAsync(order, cancellationToken));
 
-            return order;
+            return new OrderModel()
+            {
+                Id = order.Id,
+            };
         }
 
-        [OrderTracingInterceptor(ActivityName = "get order")]
+        [OrderTracingInterceptor(ActivityName = "get orders")]
         public async Task<OrdersModel> GetAsync(string id, CancellationToken cancellationToken = default)
         {
             return await _cacheService.GetAsync<OrdersModel>(id, cancellationToken) ?? throw new BadHttpRequestException("no key exists");

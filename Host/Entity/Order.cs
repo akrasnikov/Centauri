@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Host.Models
+namespace Host.Entity
 {
 #nullable disable
     public class Order

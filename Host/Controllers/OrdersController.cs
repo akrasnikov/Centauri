@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Host.Controllers
 {
-
-
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
@@ -19,13 +17,13 @@ namespace Host.Controllers
 
 
 
-        [ProducesResponseType(typeof(Response<OrdersModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response<OrderModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost("orders/order")]
-        public async Task<IActionResult> CreateAsync([FromBody] OrderRequest request)
+        public IActionResult Create([FromBody] OrderRequest request)
         {
-            var response = await _orderService.CreateAsync(request, HttpContext.RequestAborted);
+            var response = _orderService.Create(request, HttpContext.RequestAborted);
             return Ok(response);
         }
 
@@ -42,7 +40,7 @@ namespace Host.Controllers
                 throw new ArgumentException($"\"{nameof(id)}\" не может быть пустым или содержать только пробел.", nameof(id));
             }
 
-            var response = await  _orderService.GetAsync(id, HttpContext.RequestAborted);
+            var response = await _orderService.GetAsync(id, HttpContext.RequestAborted);
             return Ok(response);
         }
     }
