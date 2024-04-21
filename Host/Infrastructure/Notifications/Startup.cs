@@ -10,14 +10,16 @@ namespace Host.Infrastructure.Notifications
         {
             ILogger logger = Log.ForContext(typeof(Startup));
 
-            var signalRSettings = config.GetSection(nameof(SignalRSettings)).Get<SignalRSettings>() ?? throw new ExtensionException("SignalR is not configured."); ;
+             services.AddSignalR();
 
-            if (!signalRSettings.UseBackplane)
-            {
-                services.AddSignalR();
-            }
-            else
-            {
+            //var signalRSettings = config.GetSection(nameof(SignalRSettings)).Get<SignalRSettings>() ?? throw new ExtensionException("SignalR is not configured."); ;
+
+            //if (!signalRSettings.UseBackplane)
+            //{
+            //    services.AddSignalR();
+            //}
+            //else
+            //{
             //    var backplaneSettings = config.GetSection("SignalRSettings:Backplane").Get<SignalRSettings.Backplane>();
             //    if (backplaneSettings is null) throw new InvalidOperationException("Backplane enabled, but no backplane settings in config.");
             //    switch (backplaneSettings.Provider)
@@ -35,7 +37,7 @@ namespace Host.Infrastructure.Notifications
             //    }
 
             //    logger.Information($"SignalR Backplane Current Provider: {backplaneSettings.Provider}.");
-            }
+            //}
 
             return services;
         }

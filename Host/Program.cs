@@ -1,4 +1,5 @@
 using Host.Configurations;
+using Host.Events;
 using Host.Infrastructure.BackgroundJobs;
 using Host.Infrastructure.Caching;
 using Host.Infrastructure.HttpClients;
@@ -30,6 +31,7 @@ namespace Host
                 builder.AddConfigurations().RegisterSerilog();
                 builder.Services.AddControllers();
                 builder.Services.AddServices();
+                builder.Services.AddEvents();
 
                 //var backend = new SerilogLoggingBackend(Log.Logger);
                 //backend.Options.IncludeActivityExecutionTime = true;
@@ -66,6 +68,8 @@ namespace Host
                 app.UseAuthorization();
                 app.UseRouting();
                 app.MapControllers();
+
+                app.MapNotifications();
 
                 app.UseOpenTelemetryPrometheusScrapingEndpoint();
 

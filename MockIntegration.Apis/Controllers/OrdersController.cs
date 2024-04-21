@@ -22,6 +22,7 @@ namespace Host.Integration.Controllers
         public async Task<IActionResult> GetAsync([FromQuery] string from, [FromQuery] string to, [FromQuery] DateTime time)
         {
             _logger.LogInformation("get orders integration");            
+            await Task.Delay(TimeSpan.FromMilliseconds(new Random().Next(0, 10) * 100));
             var generatedOrders = GetOrderGenerator(from, to, time).Generate(2);
             return Ok(generatedOrders);
         }

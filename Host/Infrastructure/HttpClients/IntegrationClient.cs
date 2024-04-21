@@ -1,13 +1,13 @@
 ﻿using Host.Entity;
+using Host.Events.Contracts;
 using Host.Extensions;
 using Host.Infrastructure.Caching;
-using Host.Infrastructure.Metrics;
-using Host.Infrastructure.Notifications;
 using Host.Infrastructure.Tracing;
 using Host.Infrastructure.Tracing.Aspect;
+using MassTransit;
 using Microsoft.Extensions.Options;
-using Serilog.Context;
 using System.Text.Json;
+using LogContext = Serilog.Context.LogContext;
 
 
 namespace Host.Infrastructure.HttpClients
@@ -17,25 +17,22 @@ namespace Host.Infrastructure.HttpClients
     {
         private readonly HttpClient _client;
         private readonly ICacheService _cacheService;
-        private readonly INotificationService _notificationService;
-        private readonly OrderInstrumentation _instrumentation;
+        readonly IBus _bus;
         private readonly List<RequestInfo> _requests;
         private readonly ILogger<IntegrationClient> _logger;
 
         public IntegrationClient(
             HttpClient client,
-            OrderInstrumentation instrumentation,
             ILogger<IntegrationClient> logger,
             ICacheService cacheService,
-            INotificationService notification,
-            IOptions<IntegrationOptions> options)
+            IOptions<IntegrationOptions> options,
+            IBus bus)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
-            _instrumentation = instrumentation ?? throw new ArgumentNullException(nameof(instrumentation));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
-            _notificationService = notification ?? throw new ArgumentNullException(nameof(notification));
             _requests = options.Value.Requests ?? throw new ArgumentNullException(nameof(options));
+            _bus = bus ?? throw new ArgumentNullException(nameof(bus));
         }
 
         public IEnumerable<IEnumerable<string>> Urls(Orders orders)
@@ -78,29 +75,41 @@ namespace Host.Infrastructure.HttpClients
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var order =
+                    var orders =
                         await response
                         .Content
                         .ReadFromJsonAsync<List<Order>>(cancellationToken)
                         ?? throw new InvalidOperationException("reason content");
 
-                    model.Add(order);
+                    model.Add(orders);
 
-                    _logger.LogInformation($"response received -> id: {model.Id} - list : {JsonSerializer.Serialize(order)}");
+                    await _bus.Publish(new OrderCreated()
+                    {
+                        Id = model.Id,
+                        Progress = model.Progress
+                        
+                    }, cancellationToken);
+                    
+                    _logger.LogInformation($"response received -> id: {model.Id} - list : {JsonSerializer.Serialize(orders)}");
 
                     return;
                 }
 
-                _logger.LogError($"order id: {model.Id} failed with status code {response.StatusCode}");
+                _logger.LogError($"orders id: {model.Id} failed with status code {response.StatusCode}");
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError($"order id: {model.Id} for url: {url}: {ex.Message}");
+                _logger.LogError($"orders id: {model.Id} for url: {url}: {ex.Message}");
             }
             catch (Exception ex)
             {
-                _logger.LogError($"order id: {model.Id} for url: {url}: {ex.Message}");
+                _logger.LogError($"orders id: {model.Id} for url: {url}: {ex.Message}");
             }
+
+            await _bus.Publish(new OrderCanceled()
+            {
+
+            }, cancellationToken);
         }
     }
 }

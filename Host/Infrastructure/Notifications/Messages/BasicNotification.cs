@@ -12,4 +12,7 @@ public class BasicNotification : INotificationMessage
 
     public string? Message { get; set; }
     public LabelType Label { get; set; }
+    public string Id { get; set; }
+
+    public int Progress { get; set; }
 }

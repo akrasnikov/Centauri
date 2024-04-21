@@ -12,6 +12,10 @@ public class NotificationHub : Hub, ITransientService
     {
         _logger = logger;
     }
+    public async Task SendMessage(string user, string message)
+    {
+        await Clients.All.SendAsync("ReceiveMessage", user, message);
+    }
 
     public override async Task OnConnectedAsync()
     {  
