@@ -39,7 +39,7 @@ namespace Order.Support
         private static ConcurrentDictionary<string, BasicNotification> _notifications = new();
         static void DisplayProgress(/*int completed, int total*/)
         {
-            int total = 10;
+            int total = 40;
             Console.Clear();
 
             foreach (var notification in _notifications)
@@ -61,7 +61,7 @@ namespace Order.Support
         static async Task Main(string[] args)
         {
             var connection = new HubConnectionBuilder()
-            .WithUrl("http://localhost:8010/notifications")
+            .WithUrl("http://104.131.189.170:8010/notifications")
             .WithAutomaticReconnect(new[] { TimeSpan.Zero, TimeSpan.Zero, TimeSpan.FromSeconds(10) })
             .Build();
 
@@ -77,7 +77,7 @@ namespace Order.Support
 
             for (int i = 0; i < 25; i++)
             {
-                tasks.Add(MakeHttpRequestAsync("http://localhost:8010/orders/order"));
+                tasks.Add(MakeHttpRequestAsync("http://104.131.189.170:8010/orders/order"));
             }
 
             string[] results = await Task.WhenAll(tasks);
