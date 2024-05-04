@@ -39,7 +39,7 @@ namespace Order.Support
         private static ConcurrentDictionary<string, BasicNotification> _notifications = new();
         static void DisplayProgress(/*int completed, int total*/)
         {
-            int total = 40;
+            int total = 20;
             Console.Clear();
 
             foreach (var notification in _notifications)
@@ -75,7 +75,7 @@ namespace Order.Support
             List<Task<string>> tasks = new List<Task<string>>();
 
 
-            for (int i = 0; i < 25; i++)
+            for (int i = 0; i < 200; i++)
             {
                 tasks.Add(MakeHttpRequestAsync("http://104.131.189.170:8010/orders/order"));
             }
