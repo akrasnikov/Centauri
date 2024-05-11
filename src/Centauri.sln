@@ -1,0 +1,68 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{46BBDF74-64B0-441A-BD51-7F7C74E1E122}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		docker-compose.yml = docker-compose.yml
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Booking", "Booking", "{D532EE58-E492-438C-BFF1-1DC84350AD06}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ordering", "Ordering", "{6A6417C8-033D-4407-8E3D-553676290851}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{A4382F17-36F8-4643-A7DC-CB7C4868713D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Host", "services\Ordering\Host\Ordering.Host.csproj", "{944CA398-E730-41AD-8D82-CB748FE8E28F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booking.Host", "services\Booking\Host\Booking.Host.csproj", "{EAA1E099-BFA9-4C4D-91EC-C984F6808581}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Banking", "Banking", "{4F93C791-205E-4B64-9B10-92E73B8D860C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Banking.Host", "services\Banking\Host\Banking.Host.csproj", "{A0E27FB8-2A1C-4941-8FAE-DACB5B04890E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Banking.Worker", "services\Banking\Banking.EventManager\Banking.Worker.csproj", "{8EAE143D-E82F-4489-8B65-01E2AA1FD89A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{9D5C30DF-C351-420B-9881-47DAB3321BD7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{944CA398-E730-41AD-8D82-CB748FE8E28F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{944CA398-E730-41AD-8D82-CB748FE8E28F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{944CA398-E730-41AD-8D82-CB748FE8E28F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{944CA398-E730-41AD-8D82-CB748FE8E28F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAA1E099-BFA9-4C4D-91EC-C984F6808581}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAA1E099-BFA9-4C4D-91EC-C984F6808581}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAA1E099-BFA9-4C4D-91EC-C984F6808581}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAA1E099-BFA9-4C4D-91EC-C984F6808581}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0E27FB8-2A1C-4941-8FAE-DACB5B04890E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0E27FB8-2A1C-4941-8FAE-DACB5B04890E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0E27FB8-2A1C-4941-8FAE-DACB5B04890E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0E27FB8-2A1C-4941-8FAE-DACB5B04890E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EAE143D-E82F-4489-8B65-01E2AA1FD89A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EAE143D-E82F-4489-8B65-01E2AA1FD89A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EAE143D-E82F-4489-8B65-01E2AA1FD89A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EAE143D-E82F-4489-8B65-01E2AA1FD89A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{944CA398-E730-41AD-8D82-CB748FE8E28F} = {6A6417C8-033D-4407-8E3D-553676290851}
+		{EAA1E099-BFA9-4C4D-91EC-C984F6808581} = {D532EE58-E492-438C-BFF1-1DC84350AD06}
+		{A0E27FB8-2A1C-4941-8FAE-DACB5B04890E} = {4F93C791-205E-4B64-9B10-92E73B8D860C}
+		{8EAE143D-E82F-4489-8B65-01E2AA1FD89A} = {4F93C791-205E-4B64-9B10-92E73B8D860C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {84CF16A6-EEBE-406A-A173-736280566078}
+	EndGlobalSection
+EndGlobal

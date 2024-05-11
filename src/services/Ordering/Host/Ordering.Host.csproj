@@ -1,0 +1,94 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>32dd1b61-d868-4a5a-af0f-04e56ceac125</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Containers\**" />
+    <Compile Remove="LogFiles\**" />
+    <Compile Remove="Logs\**" />
+    <Compile Remove="Responses\**" />
+    <Content Remove="Containers\**" />
+    <Content Remove="LogFiles\**" />
+    <Content Remove="Logs\**" />
+    <Content Remove="Responses\**" />
+    <EmbeddedResource Remove="Containers\**" />
+    <EmbeddedResource Remove="LogFiles\**" />
+    <EmbeddedResource Remove="Logs\**" />
+    <EmbeddedResource Remove="Responses\**" />
+    <None Remove="Containers\**" />
+    <None Remove="LogFiles\**" />
+    <None Remove="Logs\**" />
+    <None Remove="Responses\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="postsharp.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+
+	  <PackageReference Include="Autofac" Version="8.0.0" />
+
+	  <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
+
+	  <PackageReference Include="Autofac.Extras.DynamicProxy" Version="7.1.0" />
+
+	  <PackageReference Include="Elastic.Apm.SerilogEnricher" Version="8.11.0" />
+
+	  <PackageReference Include="Elastic.CommonSchema.Serilog" Version="8.11.0" />
+
+	  <PackageReference Include="Figgle" Version="0.5.1" />
+
+	  <PackageReference Include="Hangfire.Console.Extensions" Version="2.0.0" />
+
+	  <PackageReference Include="MassTransit" Version="8.2.1" />
+
+	  <PackageReference Include="Microsoft.AspNet.SignalR.StackExchangeRedis" Version="2.4.3" />
+
+	  <PackageReference Include="Microsoft.AspNetCore.HeaderPropagation" Version="8.0.4" />
+
+	  <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.3" />
+
+	  <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.3.0" />
+
+	  <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.8.0" />
+
+	  <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.8.0" />
+	  <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.6.0-rc.1" />
+	  <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.0" />
+	  <PackageReference Include="OpenTelemetry.Instrumentation.Hangfire" Version="1.6.0-beta.1" />
+	  <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.8.0" />
+	  <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.5.1" />
+	  
+    <PackageReference Include="FluentValidation" Version="11.9.0" />
+    <PackageReference Include="Hangfire" Version="1.8.11" />
+    <PackageReference Include="Hangfire.InMemory" Version="0.8.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />    
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.7.0" />
+    <PackageReference Include="PostSharp" Version="2024.0.6" />
+    <PackageReference Include="PostSharp.Patterns.Diagnostics" Version="2024.0.6" />
+    <PackageReference Include="PostSharp.Patterns.Diagnostics.Serilog" Version="2024.0.6" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageReference Include="Serilog.Enrichers.CorrelationId" Version="3.0.1" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0" />
+    <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />
+    <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+    <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+    <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
+    <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="postsharp.config" />
+  </ItemGroup>
+
+</Project>
