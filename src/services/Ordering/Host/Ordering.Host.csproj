@@ -91,4 +91,8 @@
     <None Include="postsharp.config" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Booking\Booking.Infrastructure\Booking.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
