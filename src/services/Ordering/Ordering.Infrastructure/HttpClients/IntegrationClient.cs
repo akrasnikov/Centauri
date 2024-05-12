@@ -1,11 +1,10 @@
 ﻿using MassTransit;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Ordering.Host.Entity;
-using Ordering.Host.Events.Contracts;
-using Ordering.Host.Extensions;
-using Ordering.Host.Infrastructure.Tracing.Aspect;
+using Ordering.Domain.Entity;
+using Ordering.Domain.Tracing;
 using Ordering.Infrastructure.Caching;
-using Ordering.Infrastructure.Tracing;
+using System.Net.Http.Json;
 using System.Text.Json;
 using LogContext = Serilog.Context.LogContext;
 

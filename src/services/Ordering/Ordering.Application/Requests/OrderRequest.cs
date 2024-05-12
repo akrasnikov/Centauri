@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Ordering.Host.Requests
+namespace Ordering.Application.Requests
 {
 #nullable disable
     public class OrderRequest

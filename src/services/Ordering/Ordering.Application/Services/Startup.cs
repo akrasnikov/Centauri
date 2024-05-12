@@ -1,7 +1,8 @@
-﻿using Ordering.Host.Common.Interfaces;
+﻿using Ordering.Application.Services;
+using Ordering.Host.Common.Interfaces;
 using Ordering.Host.Infrastructure.Metrics;
 
-namespace Ordering.Host.Services;
+namespace Ordering.Application.Services;
 
 internal static class Startup
 {

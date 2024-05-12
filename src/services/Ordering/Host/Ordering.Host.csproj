@@ -93,6 +93,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Booking\Booking.Infrastructure\Booking.Infrastructure.csproj" />
+    <ProjectReference Include="..\Ordering.Application\Ordering.Application.csproj" />
+    <ProjectReference Include="..\Ordering.Domain\Ordering.Domain.csproj" />
   </ItemGroup>
 
 </Project>

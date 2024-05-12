@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Ordering.Host.Interfaces;
-using Ordering.Host.Models;
-using Ordering.Host.Requests;
-using Ordering.Host.Wrappers;
+using Ordering.Application.Requests;
+using Ordering.Domain.Interfaces;
+using Ordering.Domain.Models;
+using Ordering.Domain.Wrappers;
 
 namespace Ordering.Host.Controllers
 {

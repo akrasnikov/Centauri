@@ -1,8 +1,12 @@
 ﻿using Hangfire;
-using Microsoft.Extensions.Options;
-using Ordering.Host.Requests;
+using Ordering.Application.Requests;
+using Ordering.Domain.Entity;
+using Ordering.Domain.Interfaces;
+using Ordering.Domain.Models;
+using Ordering.Infrastructure.Caching;
+using Ordering.Infrastructure.HttpClients;
 
-namespace Ordering.Host.Services
+namespace Ordering.Application.Services
 {
     //[CustomLoggingFormatter]
     public class OrderService : IOrderService

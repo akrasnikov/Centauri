@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Ordering.Host.Common.Interfaces;
+using Ordering.Domain.Common.Interfaces;
 using System.Text;
 
 namespace Ordering.Infrastructure.Caching;
