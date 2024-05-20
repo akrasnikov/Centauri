@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Ordering.Domain.Tracing.Aspect;
+using System.Collections.Concurrent;
 
 namespace Ordering.Domain.Entity
 {

@@ -1,8 +1,11 @@
 ﻿using Hangfire;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Ordering.Application.Requests;
 using Ordering.Domain.Entity;
 using Ordering.Domain.Interfaces;
 using Ordering.Domain.Models;
+using Ordering.Domain.Tracing.Aspect;
 using Ordering.Infrastructure.Caching;
 using Ordering.Infrastructure.HttpClients;
 

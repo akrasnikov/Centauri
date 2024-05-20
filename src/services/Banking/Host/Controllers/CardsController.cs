@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Ordering.Domain.Models;
+using Ordering.Domain.Tracing.Aspect;
 using Ordering.Domain.Wrappers;
 
 namespace Banking.Host.Controllers

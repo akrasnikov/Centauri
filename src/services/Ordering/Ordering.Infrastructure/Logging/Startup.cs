@@ -1,9 +1,6 @@
-using Elastic.Apm.SerilogEnricher;
-using Figgle;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Events;
-using Serilog.Exceptions;
 using Serilog.Formatting.Compact;
 
 namespace Ordering.Infrastructure.Logging;

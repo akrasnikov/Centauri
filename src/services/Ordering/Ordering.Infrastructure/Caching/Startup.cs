@@ -1,4 +1,5 @@
-﻿using Ordering.Host.Exceptions;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ordering.Infrastructure.Caching;
 
