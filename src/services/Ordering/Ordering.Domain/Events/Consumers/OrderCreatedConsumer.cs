@@ -1,9 +1,7 @@
 ﻿using MassTransit;
+using Microsoft.Extensions.Logging;
+using Ordering.Domain.Tracing.Aspect;
 using Ordering.Host.Events.Contracts;
-using Ordering.Host.Infrastructure.Metrics;
-using Ordering.Host.Infrastructure.Notifications;
-using Ordering.Host.Infrastructure.Notifications.Messages;
-using Ordering.Host.Infrastructure.Tracing.Aspect;
 
 namespace Ordering.Host.Events.Consumers
 {

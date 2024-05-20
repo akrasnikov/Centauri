@@ -1,5 +1,6 @@
 ﻿using Ordering.Domain.Common.Interfaces;
 using Ordering.Domain.Models;
+using Ordering.Domain.Requests;
 
 namespace Ordering.Domain.Interfaces
 {

@@ -2,6 +2,11 @@ using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+ 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
+using Serilog.Exceptions;
+
 
 namespace Ordering.Infrastructure.Logging;
 

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Ordering.Domain.Entity;
 using Ordering.Domain.Tracing;
 using Ordering.Domain.Tracing.Aspect;
+using Ordering.Host.Events.Contracts;
 using Ordering.Infrastructure.Caching;
 using System.Net.Http.Json;
 using System.Text.Json;
