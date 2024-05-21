@@ -2,7 +2,7 @@
 using PostSharp.Serialization;
 using Serilog;
 
-namespace Ordering.Domain.Tracing.Aspect
+namespace Ordering.Infrastructure.Tracing.Aspect
 {
     [PSerializable]
     public class OrderTracingBoundarysAttribute : OnMethodBoundaryAspect

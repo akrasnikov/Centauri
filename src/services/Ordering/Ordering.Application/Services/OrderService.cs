@@ -8,6 +8,7 @@ using Ordering.Domain.Requests;
 using Ordering.Domain.Tracing.Aspect;
 using Ordering.Infrastructure.Caching;
 using Ordering.Infrastructure.HttpClients;
+using Ordering.Infrastructure.Tracing.Aspect;
 
 namespace Ordering.Application.Services
 {

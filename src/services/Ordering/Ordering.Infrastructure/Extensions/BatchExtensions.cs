@@ -1,4 +1,4 @@
-﻿namespace Ordering.Host.Extensions
+﻿namespace Ordering.Infrastructure.Extensions
 {
     public static class BatchExtensions
     {

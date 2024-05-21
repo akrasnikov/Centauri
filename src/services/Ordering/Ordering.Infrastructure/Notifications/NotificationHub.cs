@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Ordering.Host.Common.Interfaces;
+using Microsoft.Extensions.Logging;
+using Ordering.Domain.Common.Interfaces;
 
 namespace Ordering.Infrastructure.Notifications;
 

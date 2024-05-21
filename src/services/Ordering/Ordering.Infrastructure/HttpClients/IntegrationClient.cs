@@ -1,12 +1,13 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Ordering.Domain.DomainEvents.Contracts;
 using Ordering.Domain.Entity;
-using Ordering.Domain.Tracing;
-using Ordering.Domain.Tracing.Aspect;
-using Ordering.Host.Events.Contracts;
 using Ordering.Infrastructure.Caching;
-using System.Net.Http.Json;
+using Ordering.Infrastructure.Tracing;
+using Ordering.Infrastructure.Tracing.Aspect;
+using Ordering.Infrastructure.Extensions;
+    using System.Net.Http.Json;
 using System.Text.Json;
 using LogContext = Serilog.Context.LogContext;
 
@@ -84,7 +85,7 @@ namespace Ordering.Infrastructure.HttpClients
 
                     model.Add(orders);
 
-                    await _bus.Publish(new OrderCreated()
+                    await _bus.Publish(new OrderCreatedEvent()
                     {
                         Id = model.Id,
                         Progress = model.Progress

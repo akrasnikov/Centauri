@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Ordering.Domain.Tracing
+namespace Ordering.Infrastructure.Tracing
 {
     public static class OrderTracingFactory
     {

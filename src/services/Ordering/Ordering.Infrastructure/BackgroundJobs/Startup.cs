@@ -2,8 +2,12 @@ using Hangfire;
 using Hangfire.Console;
 using Hangfire.Console.Extensions;
 using Hangfire.InMemory;
-using Ordering.Host.Exceptions;
+using Hangfire.MemoryStorage;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Ordering.Infrastructure.BackgroundJobs;
+using Ordering.Infrastructure.Exceptions;
 using Serilog;
 using ILogger = Serilog.ILogger;
 

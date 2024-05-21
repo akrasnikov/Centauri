@@ -1,5 +1,4 @@
-﻿using Ordering.Domain.Tracing.Aspect;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
 namespace Ordering.Domain.Entity
 {
@@ -20,11 +19,9 @@ namespace Ordering.Domain.Entity
         public int Progress
         {
             get => Items.Count;
-            //set => progress = value;
-        }
-
-
-        [TracingInterceptor]
+            
+        } 
+         
         public void Add(List<Order> orders)
         {
             ArgumentNullException.ThrowIfNull(orders);

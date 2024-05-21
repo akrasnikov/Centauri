@@ -1,7 +1,8 @@
 ﻿using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Ordering.Host.Events;
+namespace Ordering.Worker.Events;
 
 internal static class Startup
 {

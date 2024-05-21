@@ -1,4 +1,6 @@
-using Ordering.Host.Exceptions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Ordering.Infrastructure.Exceptions;
 
 namespace Ordering.Infrastructure.HttpClients
 {

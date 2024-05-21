@@ -1,4 +1,7 @@
-﻿namespace Ordering.Infrastructure.Middleware;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Ordering.Infrastructure.Middleware;
 
 public static class Startup
 {

@@ -1,9 +1,11 @@
 ﻿using MassTransit;
-using Microsoft.Extensions.Logging;
+using Ordering.Domain.DomainEvents.Contracts;
 using Ordering.Domain.Tracing.Aspect;
-using Ordering.Host.Events.Contracts;
+using Ordering.Infrastructure.Metrics;
+using Ordering.Infrastructure.Notifications;
+using Ordering.Infrastructure.Tracing.Aspect;
 
-namespace Ordering.Host.Events.Consumers
+namespace Ordering.Worker.Events.Consumers
 {
     public class OrderCanceledConsumer : IConsumer<OrderCanceled>
     {

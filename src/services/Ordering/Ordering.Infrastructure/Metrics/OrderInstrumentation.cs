@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Metrics;
+﻿using Microsoft.Extensions.Configuration;
+using System.Diagnostics.Metrics;
 
 namespace Ordering.Infrastructure.Metrics
 {

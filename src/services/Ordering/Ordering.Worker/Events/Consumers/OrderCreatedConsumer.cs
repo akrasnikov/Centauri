@@ -1,11 +1,13 @@
 ﻿using MassTransit;
-using Microsoft.Extensions.Logging;
-using Ordering.Domain.Tracing.Aspect;
-using Ordering.Host.Events.Contracts;
+using Ordering.Domain.DomainEvents.Contracts;
+using Ordering.Infrastructure.Metrics;
+using Ordering.Infrastructure.Notifications;
+using Ordering.Infrastructure.Notifications.Messages;
+using Ordering.Infrastructure.Tracing.Aspect;
 
-namespace Ordering.Host.Events.Consumers
+namespace Ordering.Worker.Events.Consumers
 {
-    public class OrderCreatedConsumer : IConsumer<OrderCreated>
+    public class OrderCreatedConsumer : IConsumer<OrderCreatedEvent>
     {
         private readonly OrderInstrumentation _instrumentation;
         private readonly ILogger<OrderCreatedConsumer> _logger;
@@ -22,7 +24,7 @@ namespace Ordering.Host.Events.Consumers
         }
 
         [TracingInterceptor(ActivityName = "order created")]
-        public async Task Consume(ConsumeContext<OrderCreated> context)
+        public async Task Consume(ConsumeContext<OrderCreatedEvent> context)
         {
             _instrumentation.AddOrder(1);
 

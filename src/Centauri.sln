@@ -30,15 +30,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Banking.Worker", "services\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{9D5C30DF-C351-420B-9881-47DAB3321BD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Domain", "services\Ordering\Ordering.Domain\Ordering.Domain.csproj", "{BABCE127-C12C-43D6-A1A1-629366604E73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Domain", "services\Ordering\Ordering.Domain\Ordering.Domain.csproj", "{BABCE127-C12C-43D6-A1A1-629366604E73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Infrastructure", "services\Ordering\Ordering.Infrastructure\Ordering.Infrastructure.csproj", "{CDA76A5B-05A6-4B86-B467-12C277CAA6B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Infrastructure", "services\Ordering\Ordering.Infrastructure\Ordering.Infrastructure.csproj", "{CDA76A5B-05A6-4B86-B467-12C277CAA6B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Infrastructure", "services\Booking\Booking.Infrastructure\Booking.Infrastructure.csproj", "{4567CC5D-E60B-4637-B5C2-3B12C7E9A1A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booking.Infrastructure", "services\Booking\Booking.Infrastructure\Booking.Infrastructure.csproj", "{4567CC5D-E60B-4637-B5C2-3B12C7E9A1A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Domain", "services\Booking\Booking.Domain\Booking.Domain.csproj", "{B7FB97F3-156D-40FA-8B1C-3C39819435A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booking.Domain", "services\Booking\Booking.Domain\Booking.Domain.csproj", "{B7FB97F3-156D-40FA-8B1C-3C39819435A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Application", "services\Ordering\Ordering.Application\Ordering.Application.csproj", "{90E8F983-B60E-4832-8284-81CA77AD3532}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Application", "services\Ordering\Ordering.Application\Ordering.Application.csproj", "{90E8F983-B60E-4832-8284-81CA77AD3532}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Events", "shared\Shared.Events\Ordering.Events\Ordering.Events.csproj", "{A9A93337-1FD9-4F76-B800-65E75B03AE45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Worker", "services\Ordering\Ordering.Worker\Ordering.Worker.csproj", "{29C67EFC-6B88-457E-8C79-43B4C3F54DDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,6 +86,14 @@ Global
 		{90E8F983-B60E-4832-8284-81CA77AD3532}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90E8F983-B60E-4832-8284-81CA77AD3532}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90E8F983-B60E-4832-8284-81CA77AD3532}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9A93337-1FD9-4F76-B800-65E75B03AE45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9A93337-1FD9-4F76-B800-65E75B03AE45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9A93337-1FD9-4F76-B800-65E75B03AE45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9A93337-1FD9-4F76-B800-65E75B03AE45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29C67EFC-6B88-457E-8C79-43B4C3F54DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29C67EFC-6B88-457E-8C79-43B4C3F54DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29C67EFC-6B88-457E-8C79-43B4C3F54DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29C67EFC-6B88-457E-8C79-43B4C3F54DDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,6 +108,8 @@ Global
 		{4567CC5D-E60B-4637-B5C2-3B12C7E9A1A7} = {D532EE58-E492-438C-BFF1-1DC84350AD06}
 		{B7FB97F3-156D-40FA-8B1C-3C39819435A1} = {D532EE58-E492-438C-BFF1-1DC84350AD06}
 		{90E8F983-B60E-4832-8284-81CA77AD3532} = {6A6417C8-033D-4407-8E3D-553676290851}
+		{A9A93337-1FD9-4F76-B800-65E75B03AE45} = {A4382F17-36F8-4643-A7DC-CB7C4868713D}
+		{29C67EFC-6B88-457E-8C79-43B4C3F54DDD} = {6A6417C8-033D-4407-8E3D-553676290851}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {84CF16A6-EEBE-406A-A173-736280566078}

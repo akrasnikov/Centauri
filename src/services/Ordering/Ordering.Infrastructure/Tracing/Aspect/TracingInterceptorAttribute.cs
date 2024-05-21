@@ -4,7 +4,7 @@ using Serilog;
 using Serilog.Context;
 using System.Diagnostics;
 
-namespace Ordering.Domain.Tracing.Aspect
+namespace Ordering.Infrastructure.Tracing.Aspect
 {
     [PSerializable]
     public class TracingInterceptorAttribute : MethodInterceptionAspect

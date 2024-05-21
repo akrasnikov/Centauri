@@ -1,6 +1,6 @@
-﻿namespace Ordering.Host.Events.Contracts
+﻿namespace Ordering.Domain.DomainEvents.Contracts
 {
-    public class OrderCreated
+    public class OrderCreatedEvent
     {
         public string Id { get; set; }
         public int Progress { get; set; }

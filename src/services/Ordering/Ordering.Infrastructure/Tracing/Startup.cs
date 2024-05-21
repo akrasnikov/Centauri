@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-namespace Ordering.Domain.Tracing;
+namespace Ordering.Infrastructure.Tracing;
 
 public static class Startup
 {

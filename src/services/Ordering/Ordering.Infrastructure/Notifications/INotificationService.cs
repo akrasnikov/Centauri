@@ -1,4 +1,4 @@
-﻿using Ordering.Host.Common.Interfaces;
+﻿using Ordering.Domain.Common.Interfaces;
 using Ordering.Infrastructure.Notifications.Messages;
 
 namespace Ordering.Infrastructure.Notifications
